@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>记忆地图 | Nowhere Native</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a1f35;
+            --accent-color: #64b5f6;
+            --bg-color: #0a0e1a;
+            --text-color: #e0e0e0;
+        }
+        
+        body {
+            font-family: 'Noto Serif', 'Noto Serif SC', serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        .header {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+        }
+        
+        .header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 2rem;
+            color: white;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            opacity: 0.8;
+            margin: 0;
+        }
+        
+        .map-container {
+            flex: 1;
+            position: relative;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            width: 300px;
+            background-color: rgba(26, 31, 53, 0.9);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-height: calc(100% - 2rem);
+            overflow-y: auto;
+            z-index: 5;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+        
+        .info-panel h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 0.5rem;
+        }
+        
+        .memory-info {
+            margin-bottom: 1rem;
+        }
+        
+        .memory-text {
+            white-space: pre-line;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .memory-meta {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            margin-top: 0.5rem;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0;
+        }
+        
+        .close-btn:hover {
+            color: white;
+        }
+        
+        .back-btn {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            font-family: inherit;
+            z-index: 5;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-btn:hover {
+            background-color: #5095db;
+        }
+
+        /* 为空状态添加样式 */
+        .empty-state {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: rgba(26, 31, 53, 0.9);
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            max-width: 400px;
+            z-index: 5;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .empty-state h3 {
+            margin-top: 0;
+            color: var(--accent-color);
+        }
+        
+        .empty-state p {
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>记忆地图</h1>
+        <p class="subtitle">遍布全球的文化身份记忆点</p>
+    </div>
+    
+    <div class="map-container">
+        <div id="map"></div>
+        <div class="info-panel" id="info-panel">
+            <button class="close-btn" id="close-panel">&times;</button>
+            <h3 id="memory-title">记忆标题</h3>
+            <div class="memory-info">
+                <div class="memory-text" id="memory-text"></div>
+                <div class="memory-meta" id="memory-meta"></div>
+            </div>
+        </div>
+        <div class="empty-state" id="empty-state" style="display: none;">
+            <h3>暂无记忆点</h3>
+            <p>您还没有添加任何记忆到地图上。返回主页创建您的第一个记忆。</p>
+            <button id="create-memory-btn">创建记忆</button>
+        </div>
+        <button class="back-btn" id="back-btn">返回主页</button>
+    </div>
+
+    <script>
+        let map;
+        let markers = [];
+        let memories = [];
+        
+        // 初始化页面
+        document.addEventListener('DOMContentLoaded', function() {
+            // 从localStorage加载记忆
+            memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+            
+            // 设置返回按钮
+            document.getElementById('back-btn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
+            // 设置空状态按钮
+            document.getElementById('create-memory-btn').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+            
+            // 设置关闭面板按钮
+            document.getElementById('close-panel').addEventListener('click', function() {
+                document.getElementById('info-panel').style.display = 'none';
+            });
+            
+            // 如果没有记忆，显示空状态
+            if (memories.length === 0) {
+                document.getElementById('empty-state').style.display = 'block';
+            }
+        });
+        
+        // 初始化地图
+        function initMap() {
+            // 创建地图
+            map = new google.maps.Map(document.getElementById('map'), {
+                center: { lat: 30, lng: 0 },
+                zoom: 2,
+                styles: [
+                    { elementType: 'geometry', stylers: [{ color: '#242f3e' }] },
+                    { elementType: 'labels.text.stroke', stylers: [{ color: '#242f3e' }] },
+                    { elementType: 'labels.text.fill', stylers: [{ color: '#746855' }] },
+                    {
+                        featureType: 'administrative.locality',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#d59563' }]
+                    },
+                    {
+                        featureType: 'poi',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#d59563' }]
+                    },
+                    {
+                        featureType: 'poi.park',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#263c3f' }]
+                    },
+                    {
+                        featureType: 'poi.park',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#6b9a76' }]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#38414e' }]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'geometry.stroke',
+                        stylers: [{ color: '#212a37' }]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#9ca5b3' }]
+                    },
+                    {
+                        featureType: 'road.highway',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#746855' }]
+                    },
+                    {
+                        featureType: 'road.highway',
+                        elementType: 'geometry.stroke',
+                        stylers: [{ color: '#1f2835' }]
+                    },
+                    {
+                        featureType: 'road.highway',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#f3d19c' }]
+                    },
+                    {
+                        featureType: 'transit',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#2f3948' }]
+                    },
+                    {
+                        featureType: 'transit.station',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#d59563' }]
+                    },
+                    {
+                        featureType: 'water',
+                        elementType: 'geometry',
+                        stylers: [{ color: '#17263c' }]
+                    },
+                    {
+                        featureType: 'water',
+                        elementType: 'labels.text.fill',
+                        stylers: [{ color: '#515c6d' }]
+                    },
+                    {
+                        featureType: 'water',
+                        elementType: 'labels.text.stroke',
+                        stylers: [{ color: '#17263c' }]
+                    }
+                ]
+            });
+            
+            // 检查是否有记忆数据
+            if (memories.length > 0) {
+                // 添加所有记忆点到地图
+                memories.forEach(function(memory, index) {
+                    // 只处理有地理位置的记忆
+                    if (memory.location && memory.location.lat && memory.location.lng) {
+                        addMemoryMarker(memory, index);
+                    }
+                });
+                
+                // 如果有标记，调整地图视图包含所有标记
+                if (markers.length > 0) {
+                    fitMapToMarkers();
+                }
+            }
+        }
+        
+        // 添加记忆标记到地图
+        function addMemoryMarker(memory, index) {
+            const position = {
+                lat: memory.location.lat,
+                lng: memory.location.lng
+            };
+            
+            const marker = new google.maps.Marker({
+                position: position,
+                map: map,
+                title: `${memory.nameLocal} / ${memory.nameForeign}`,
+                animation: google.maps.Animation.DROP,
+                icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    fillColor: '#64b5f6',
+                    fillOpacity: 0.7,
+                    strokeColor: '#ffffff',
+                    strokeWeight: 1,
+                    scale: 8
+                }
+            });
+            
+            // 添加点击事件
+            marker.addListener('click', function() {
+                showMemoryDetails(memory);
+                
+                // 放大到该位置
+                map.setZoom(14);
+                map.setCenter(position);
+            });
+            
+            markers.push(marker);
+        }
+        
+        // 显示记忆详情
+        function showMemoryDetails(memory) {
+            const infoPanel = document.getElementById('info-panel');
+            const memoryTitle = document.getElementById('memory-title');
+            const memoryText = document.getElementById('memory-text');
+            const memoryMeta = document.getElementById('memory-meta');
+            
+            // 设置内容
+            memoryTitle.textContent = `${memory.nameLocal} / ${memory.nameForeign}`;
+            memoryText.textContent = memory.text;
+            
+            // 格式化日期
+            const date = new Date(memory.timestamp);
+            const formattedDate = date.toLocaleDateString();
+            
+            // 设置元数据
+            memoryMeta.textContent = `${memory.location.name} · ${formattedDate}`;
+            
+            // 显示面板
+            infoPanel.style.display = 'block';
+        }
+        
+        // 调整地图以包含所有标记
+        function fitMapToMarkers() {
+            const bounds = new google.maps.LatLngBounds();
+            
+            markers.forEach(function(marker) {
+                bounds.extend(marker.getPosition());
+            });
+            
+            map.fitBounds(bounds);
+            
+            // 如果只有一个标记，适当缩放
+            if (markers.length === 1) {
+                map.setZoom(12);
+            }
+        }
+    </script>
+    
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap" async defer></script>
+</body>
+</html> 

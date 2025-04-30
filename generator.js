@@ -210,14 +210,14 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('表单已提交，正在收集数据...');
     
     try {
-      userData = collectUserData();
+    userData = collectUserData();
       console.log('用户数据:', userData);
       
       if (!userData) {
         throw new Error('用户数据收集失败');
       }
       
-      generateMonologue();
+    generateMonologue();
     } catch (error) {
       console.error('生成独白时出错:', error);
       
@@ -241,51 +241,51 @@ document.addEventListener('DOMContentLoaded', function() {
   function collectUserData() {
     console.log('开始收集用户数据...');
     try {
-      const nameLocal = document.getElementById('name-local').value;
-      const nameForeign = document.getElementById('name-foreign').value;
-      const nativeLanguage = document.getElementById('native-language').value;
-      const food = document.getElementById('food').value;
+    const nameLocal = document.getElementById('name-local').value;
+    const nameForeign = document.getElementById('name-foreign').value;
+    const nativeLanguage = document.getElementById('native-language').value;
+    const food = document.getElementById('food').value;
       
       console.log('基本信息收集完成:', { nameLocal, nameForeign, nativeLanguage, food });
-      
-      // 收集所有选中的语言
-      const languages = [];
-      document.querySelectorAll('input[name="language"]:checked').forEach(checkbox => {
-        languages.push(checkbox.value);
-      });
+    
+    // 收集所有选中的语言
+    const languages = [];
+    document.querySelectorAll('input[name="language"]:checked').forEach(checkbox => {
+      languages.push(checkbox.value);
+    });
       
       console.log('选中的语言:', languages);
-      
-      // 确保至少有一种语言被选中
-      if (languages.length === 0) {
+    
+    // 确保至少有一种语言被选中
+    if (languages.length === 0) {
         console.log('没有选择语言，使用默认语言');
-        if (nativeLanguage) {
-          languages.push(nativeLanguage);
-        } else {
-          languages.push('english');
-        }
+      if (nativeLanguage) {
+        languages.push(nativeLanguage);
+      } else {
+        languages.push('english');
       }
-      
-      // 收集文化背景
-      const culturalBackgrounds = [];
-      document.querySelectorAll('input[name="cultural-bg"]:checked').forEach(checkbox => {
-        culturalBackgrounds.push(checkbox.value);
-      });
+    }
+    
+    // 收集文化背景
+    const culturalBackgrounds = [];
+    document.querySelectorAll('input[name="cultural-bg"]:checked').forEach(checkbox => {
+      culturalBackgrounds.push(checkbox.value);
+    });
       
       console.log('选中的文化背景:', culturalBackgrounds);
-      
-      const feeling = document.querySelector('input[name="feeling"]:checked').value;
+    
+    const feeling = document.querySelector('input[name="feeling"]:checked').value;
       console.log('选中的感受:', feeling);
-      
-      return {
-        nameLocal,
-        nameForeign,
-        nativeLanguage,
-        languages,
-        food,
-        culturalBackgrounds,
-        feeling
-      };
+    
+    return {
+      nameLocal,
+      nameForeign,
+      nativeLanguage,
+      languages,
+      food,
+      culturalBackgrounds,
+      feeling
+    };
     } catch (error) {
       console.error('收集用户数据时出错:', error);
       return null;
@@ -457,7 +457,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 开始打字机效果
     try {
-      type();
+    type();
     } catch (error) {
       console.error('打字机效果执行出错:', error);
       // 如果打字机效果失败，直接显示文本
