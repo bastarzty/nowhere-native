@@ -210,26 +210,40 @@
             line-height: 1.6;
         }
         
-        .back-link {
+        .controls {
             position: fixed;
             bottom: 20px;
-            left: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 10;
+            padding: 10px;
+        }
+        
+        .control-btn {
             background-color: rgba(100, 181, 246, 0.2);
             color: white;
             padding: 12px 24px;
             border-radius: 30px;
-            text-decoration: none;
-            z-index: 10;
-            backdrop-filter: blur(5px);
             border: 1px solid rgba(100, 181, 246, 0.3);
+            cursor: pointer;
             font-size: 0.9rem;
+            backdrop-filter: blur(5px);
+            font-family: inherit;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
-        .back-link:hover {
+        .control-btn:hover {
             background-color: rgba(100, 181, 246, 0.4);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .back-link {
+            text-decoration: none;
+            color: white;
         }
     </style>
 </head>
@@ -245,8 +259,14 @@
         <div class="memory-container" id="memory-container">
             <!-- Memory cards will be dynamically generated here -->
         </div>
-        
-        <a href="index.html" class="back-link">Return to Creation Page</a>
+
+        <div class="controls">
+            <input type="file" id="import-file" accept=".json" style="display:none">
+            <button id="import-btn" class="control-btn">导入记忆</button>
+            <button id="export-btn" class="control-btn">导出记忆</button>
+            <button id="github-btn" class="control-btn">查看GitHub提交</button>
+            <button class="control-btn"><a href="index.html" class="back-link">返回创作页</a></button>
+        </div>
     </div>
 
     <script>
@@ -284,89 +304,130 @@
             const screenWidth = window.innerWidth;
             const screenHeight = window.innerHeight;
             
-            // 从本地和云端获取独白数据
+            // 从本地获取独白数据
             loadAllMemories();
             
-            async function loadAllMemories() {
-                // 先获取本地数据
-                const localMemories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+            function loadAllMemories() {
+                // 从本地存储获取记忆
+                const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
                 
-                try {
-                    // 再获取云端数据
-                    const cloudMemories = await fetchFromCloud();
-                    
-                    // 合并数据（避免重复）
-                    const allMemories = mergeMemories(localMemories, cloudMemories);
-                    
-                    if (allMemories.length === 0) {
-                        // 显示空状态
-                        const emptyMessage = document.createElement('div');
-                        emptyMessage.className = 'empty-message';
-                        emptyMessage.textContent = 'The memory box is still empty. Go create your first cultural identity monologue!';
-                        container.appendChild(emptyMessage);
-                        return;
-                    }
-                    
-                    // 显示所有记忆
-                    displayMemories(allMemories);
-                    
-                } catch (error) {
-                    console.error('获取云端数据失败:', error);
-                    
-                    // 如果云端获取失败，至少显示本地数据
-                    if (localMemories.length === 0) {
-                        const emptyMessage = document.createElement('div');
-                        emptyMessage.className = 'empty-message';
-                        emptyMessage.textContent = 'The memory box is still empty. Go create your first cultural identity monologue!';
-                        container.appendChild(emptyMessage);
-                    } else {
-                        displayMemories(localMemories);
-                    }
+                if (memories.length === 0) {
+                    // 显示空状态
+                    const emptyMessage = document.createElement('div');
+                    emptyMessage.className = 'empty-message';
+                    emptyMessage.textContent = 'The memory box is still empty. Go create your first cultural identity monologue!';
+                    container.appendChild(emptyMessage);
+                } else {
+                    // 显示记忆
+                    displayMemories(memories);
                 }
             }
             
-            // 从云端获取数据
-            async function fetchFromCloud() {
-                try {
-                    // 设置超时
-                    const timeout = 10000; // 10秒超时
-                    const controller = new AbortController();
-                    const timeoutId = setTimeout(() => controller.abort(), timeout);
-                    
-                    // 使用JSONBox.io获取所有数据
-                    const response = await fetch('https://jsonbox.io/nowhere_native_data_box', {
-                        signal: controller.signal
-                    });
-                    clearTimeout(timeoutId);
-                    
-                    if (!response.ok) {
-                        console.error('JSONBox API响应错误:', response.status, response.statusText);
-                        return [];
-                    }
-                    
-                    // JSONBox直接返回数组格式的数据
-                    const data = await response.json();
-                    
-                    if (Array.isArray(data) && data.length > 0) {
-                        console.log(`成功从JSONBox获取了 ${data.length} 条记忆`);
-                        return data;
-                    }
-                    
-                    // 如果没有数据，返回空数组
-                    return [];
-                } catch (error) {
-                    console.error('从云端获取数据失败:', error);
-                    return [];
-                }
-            }
+            // 设置导入功能
+            const importBtn = document.getElementById('import-btn');
+            const importFile = document.createElement('input');
+            importFile.type = 'file';
+            importFile.accept = '.json';
+            importFile.style.display = 'none';
+            document.body.appendChild(importFile);
             
-            // 合并本地和云端数据，避免重复
-            function mergeMemories(localMemories, cloudMemories) {
-                // 使用Set来保证唯一性（基于ID）
+            importBtn.addEventListener('click', function() {
+                importFile.click();
+            });
+            
+            importFile.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        // 解析JSON
+                        const importedMemories = JSON.parse(event.target.result);
+                        
+                        if (!Array.isArray(importedMemories)) {
+                            throw new Error('无效的记忆文件格式');
+                        }
+                        
+                        // 获取现有记忆
+                        const existingMemories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+                        
+                        // 合并记忆（避免重复）
+                        const mergedMemories = mergeMemories(existingMemories, importedMemories);
+                        
+                        // 保存合并后的记忆
+                        localStorage.setItem('nowhere-native-memories', JSON.stringify(mergedMemories));
+                        
+                        // 清除现有卡片
+                        container.innerHTML = '';
+                        
+                        // 重新显示
+                        displayMemories(mergedMemories);
+                        
+                        alert(`成功导入了 ${importedMemories.length} 条记忆`);
+                    } catch (error) {
+                        console.error('导入记忆失败:', error);
+                        alert('导入失败: ' + error.message);
+                    }
+                    
+                    // 重置文件输入
+                    importFile.value = '';
+                };
+                
+                reader.readAsText(file);
+            });
+            
+            // 设置导出功能
+            const exportBtn = document.getElementById('export-btn');
+            exportBtn.addEventListener('click', function() {
+                // 从本地存储获取所有记忆
+                const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+                
+                if (memories.length === 0) {
+                    alert('没有可导出的记忆');
+                    return;
+                }
+                
+                // 创建数据URL
+                const dataStr = JSON.stringify(memories);
+                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+                
+                // 创建下载链接
+                const exportLink = document.createElement('a');
+                exportLink.setAttribute('href', dataUri);
+                exportLink.setAttribute('download', 'nowhere-native-memories.json');
+                exportLink.style.display = 'none';
+                
+                // 添加到DOM，触发下载，然后移除
+                document.body.appendChild(exportLink);
+                exportLink.click();
+                document.body.removeChild(exportLink);
+            });
+            
+            // 添加GitHub仓库查看功能
+            const githubBtn = document.getElementById('github-btn');
+            githubBtn.addEventListener('click', function() {
+                // 从本地存储获取仓库信息
+                const repoOwner = localStorage.getItem('nowhere-native-repo-owner') || '';
+                const repoName = localStorage.getItem('nowhere-native-repo-name') || '';
+                
+                // 如果没有设置仓库信息，提示用户
+                if(!repoOwner || !repoName) {
+                    alert('请先在主页设置中配置GitHub仓库信息');
+                    return;
+                }
+                
+                // 打开GitHub Issues页面
+                window.open(`https://github.com/${repoOwner}/${repoName}/issues`, '_blank');
+            });
+            
+            // 合并记忆功能
+            function mergeMemories(existingMemories, importedMemories) {
+                // 使用Map来保证唯一性（基于ID）
                 const uniqueMemories = new Map();
                 
-                // 添加本地记忆
-                localMemories.forEach(memory => {
+                // 添加现有记忆
+                existingMemories.forEach(memory => {
                     if (memory.id) {
                         uniqueMemories.set(memory.id, memory);
                     } else {
@@ -376,16 +437,20 @@
                     }
                 });
                 
-                // 添加云端记忆
-                cloudMemories.forEach(memory => {
+                // 添加导入的记忆
+                importedMemories.forEach(memory => {
                     if (memory.id) {
+                        uniqueMemories.set(memory.id, memory);
+                    } else {
+                        // 为导入数据生成ID
+                        memory.id = new Date().getTime() + '-' + Math.random().toString(36).substr(2, 9);
                         uniqueMemories.set(memory.id, memory);
                     }
                 });
                 
                 // 转换回数组并按时间排序（最新的在前）
                 return Array.from(uniqueMemories.values())
-                    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
             }
             
             // 显示记忆
