@@ -613,16 +613,53 @@ ${endingSentence}`;
                     return;
                 }
                 
-                // 暂时使用localStorage存储数据
-                let memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
-                memories.push(currentMonologue);
-                localStorage.setItem('nowhere-native-memories', JSON.stringify(memories));
+                // 创建唯一ID
+                currentMonologue.id = new Date().getTime() + '-' + Math.random().toString(36).substr(2, 9);
                 
-                alert('Your monologue has been collected. Check all collected monologues in the "Memory Box".');
-                
-                // 打开展示页面
-                window.open('memories.html', '_blank');
+                // 使用Firebase或其他云存储服务
+                saveToCloud(currentMonologue).then(() => {
+                    alert('您的独白已被收集。可以在"记忆盒子"中查看所有收集的独白。');
+                    
+                    // 同时保存到本地，便于个人查看
+                    let memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+                    memories.push(currentMonologue);
+                    localStorage.setItem('nowhere-native-memories', JSON.stringify(memories));
+                    
+                    // 打开展示页面
+                    window.open('memories.html', '_blank');
+                }).catch(error => {
+                    console.error('上传失败:', error);
+                    alert('上传失败，请重试。错误: ' + error.message);
+                });
             });
+            
+            // 保存到云端函数
+            async function saveToCloud(data) {
+                // 这里使用一个简单的公共API服务来存储数据
+                // 注意：在生产环境中，您应该使用更安全可靠的服务，如Firebase
+                const apiUrl = 'https://jsonbin.io/api/v3/b';
+                
+                try {
+                    const response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': '$2a$10$tJ2XWqTxWGxN/Gj0tgFI3.CXhvzCcVYngMhHdUq3Uo8e9JYvO/Xbe', // 公共测试密钥，实际应用中应更换
+                            'X-Collection-Id': '6462bc7febad4645be5558e2' // 通用测试集合
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('网络响应不正常');
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('保存到云端失败:', error);
+                    throw error;
+                }
+            }
             
             // 重新生成功能
             document.getElementById('regenerate-btn').addEventListener('click', function() {
