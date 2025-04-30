@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nowhere Native | Cultural Identity in Limbo</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&family=Space+Mono&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a1f35;
+            --accent-color: #64b5f6;
+            --bg-color: #0a0e1a;
+            --text-color: #e0e0e0;
+            --card-bg: rgba(255, 255, 255, 0.08);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Noto Serif', 'Noto Serif SC', serif;
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(20, 40, 80, 0.2) 0%, transparent 200px),
+                radial-gradient(circle at 70% 60%, rgba(40, 60, 120, 0.2) 0%, transparent 200px);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+            line-height: 1.6;
+            overflow-x: hidden;
+            perspective: 1000px;
+        }
+        
+        /* 星星背景 */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            animation-delay: var(--delay);
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: var(--brightness); transform: scale(1); }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 2rem 0;
+            margin-bottom: 3rem;
+        }
+        
+        header h1 {
+            font-size: 3rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(100, 181, 246, 0.5);
+            color: white;
+        }
+        
+        .subtitle {
+            font-style: italic;
+            font-size: 1.2rem;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+        
+        .input-form {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .input-form h2 {
+            text-align: center;
+            margin-top: 0;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        input[type="text"], select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: inherit;
+        }
+        
+        .input-pair {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .input-pair input {
+            flex: 1;
+        }
+        
+        .checkbox-group, .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+        
+        .checkbox-group label, .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            margin-bottom: 0;
+            cursor: pointer;
+        }
+        
+        input[type="checkbox"], input[type="radio"] {
+            margin-right: 0.5rem;
+        }
+        
+        button {
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-family: inherit;
+        }
+        
+        button:hover {
+            background-color: #5095db;
+        }
+        
+        form button {
+            display: block;
+            margin: 2rem auto 0;
+            width: 200px;
+        }
+        
+        .monologue-container {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 2rem;
+            display: none;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .output-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            white-space: pre-line;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding: 1rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .input-pair {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            
+            .checkbox-group, .radio-group {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    <div class="container">
+        <header>
+            <h1>Nowhere Native</h1>
+            <p class="subtitle">A generative experience for the culturally displaced.</p>
+        </header>
+
+        <section class="input-form">
+            <h2>Create Your Identity Monologue</h2>
+            <form id="identity-form">
+                <div class="form-group">
+                    <label for="name">Your Names (In Different Languages)</label>
+                    <div class="input-pair">
+                        <input type="text" id="name-local" placeholder="Name in your native language" required>
+                        <input type="text" id="name-foreign" placeholder="Your adopted name" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Languages You Speak (Select all that apply)</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="language" value="chinese"> Chinese</label>
+                        <label><input type="checkbox" name="language" value="english"> English</label>
+                        <label><input type="checkbox" name="language" value="korean"> Korean</label>
+                        <label><input type="checkbox" name="language" value="japanese"> Japanese</label>
+                        <label><input type="checkbox" name="language" value="french"> French</label>
+                        <label><input type="checkbox" name="language" value="spanish"> Spanish</label>
+                        <label><input type="checkbox" name="language" value="arabic"> Arabic</label>
+                        <label><input type="checkbox" name="language" value="hindi"> Hindi</label>
+                        <label><input type="checkbox" name="language" value="other"> Other</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="native-language">Your Primary Language</label>
+                    <select id="native-language" required>
+                        <option value="">-- Select Primary Language --</option>
+                        <option value="chinese">Chinese</option>
+                        <option value="english">English</option>
+                        <option value="korean">Korean</option>
+                        <option value="japanese">Japanese</option>
+                        <option value="french">French</option>
+                        <option value="spanish">Spanish</option>
+                        <option value="arabic">Arabic</option>
+                        <option value="hindi">Hindi</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Cultural Background (Select all that apply)</label>
+                    <div class="checkbox-group">
+                        <label><input type="checkbox" name="cultural-bg" value="east-asia"> East Asian</label>
+                        <label><input type="checkbox" name="cultural-bg" value="western"> Western</label>
+                        <label><input type="checkbox" name="cultural-bg" value="southeast-asia"> Southeast Asian</label>
+                        <label><input type="checkbox" name="cultural-bg" value="south-asia"> South Asian</label>
+                        <label><input type="checkbox" name="cultural-bg" value="middle-east"> Middle Eastern</label>
+                        <label><input type="checkbox" name="cultural-bg" value="africa"> African</label>
+                        <label><input type="checkbox" name="cultural-bg" value="latin-america"> Latin American</label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="food">Food from Home/Childhood Memory</label>
+                    <input type="text" id="food" placeholder="e.g., dumplings, kimchi, biryani..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>How Do You Feel About Your Cultural Identity?</label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="feeling" value="lost" checked> Lost</label>
+                        <label><input type="radio" name="feeling" value="proud"> Proud</label>
+                        <label><input type="radio" name="feeling" value="conflicted"> Conflicted</label>
+                        <label><input type="radio" name="feeling" value="nostalgic"> Nostalgic</label>
+                        <label><input type="radio" name="feeling" value="alienated"> Alienated</label>
+                    </div>
+                </div>
+
+                <button type="submit">Generate Monologue</button>
+            </form>
+        </section>
+
+        <section class="monologue-container" id="monologue-output">
+            <div class="output-text"></div>
+            <div class="actions hidden">
+                <button id="regenerate-btn">Regenerate</button>
+                <div id="language-selector-container">
+                    <span class="language-label">语言 | Language:</span>
+                </div>
+                <button id="save-btn">Save as Image</button>
+                <button id="upload-btn">Upload to Collection</button>
+            </div>
+        </section>
+
+        <footer>
+            <p>Nowhere Native - Exploring Identity Displacement</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 创建星星背景
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // 随机大小和位置
+                const size = Math.random() * 2 + 1;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // 随机动画参数
+                const duration = Math.random() * 5 + 3;
+                const delay = Math.random() * 5;
+                const brightness = Math.random() * 0.7 + 0.3;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.setProperty('--delay', `${delay}s`);
+                star.style.setProperty('--brightness', brightness);
+                
+                starsContainer.appendChild(star);
+            }
+            
+            // 简单测试文本显示
+            const form = document.getElementById('identity-form');
+            const outputContainer = document.getElementById('monologue-output');
+            const outputText = outputContainer.querySelector('.output-text');
+            let currentText = '';
+            let currentMonologue = {}; // 存储当前独白的数据
+            
+            // 随机独白句子模板
+            const sentenceTemplates = {
+                // 名字相关
+                names: [
+                    "They call me \"{nameForeign}\" at school, but my heart answers to \"{nameLocal}\".",
+                    "My official identity card says \"{nameForeign}\", but my grandmother still calls me \"{nameLocal}\".",
+                    "Some days I introduce myself as \"{nameForeign}\", other days I'm \"{nameLocal}\".",
+                    "I've practiced writing \"{nameForeign}\" so many times I sometimes forget how to write \"{nameLocal}\".",
+                    "I'm \"{nameForeign}\" in their world, and \"{nameLocal}\" in mine."
+                ],
+                
+                // 食物相关
+                food: [
+                    "I've forgotten how to write my name in my mother tongue, but I remember the taste of {food} every weekend.",
+                    "The smell of {food} brings me back to a place I barely remember.",
+                    "I dream about {food} – a taste of home I can't fully describe to my new friends.",
+                    "My mother's {food} recipe will never taste the same when I make it myself.",
+                    "I found myself crying while eating {food} in a foreign restaurant, surprised by my own reaction."
+                ],
+                
+                // 身份感相关
+                identity: [
+                    "I belong to a city that never truly knew me, and to a family that forgot how to explain who I've become.",
+                    "My accent changes depending on who I'm talking to – a chameleon adapting to survive.",
+                    "Home is a concept I've redefined too many times to count.",
+                    "I study my cultural traditions like an anthropologist, trying to understand my own heritage.",
+                    "The more languages I learn, the more versions of myself I discover."
+                ],
+                
+                // 语言相关
+                language: [
+                    "Some nights I dream in English, and cry in my native language.",
+                    "I translate my thoughts before speaking, a secret process nobody sees.",
+                    "There are feelings I can only express in my mother tongue.",
+                    "I still count and pray in my first language, no matter how long I've been away.",
+                    "I speak different languages with different parts of my soul."
+                ],
+                
+                // 漂浮感相关
+                floating: [
+                    "I'm like an island drifting between two worlds.",
+                    "I exist in the spaces between cultures, never fully belonging anywhere.",
+                    "My identity is a constantly shifting mosaic of places I've been.",
+                    "I navigate between worlds like a ghost – present but never completely visible.",
+                    "I've built my home in the hyphen between cultural identities."
+                ],
+                
+                // 结尾问题
+                ending: [
+                    "Who am I?\nYou tell me.",
+                    "Where do I belong?\nPerhaps nowhere and everywhere.",
+                    "What does it mean to have roots?\nI'm still learning.",
+                    "Am I from here or there?\nThe answer changes with the moon.",
+                    "When will I feel at home?\nMaybe when I stop asking this question."
+                ]
+            };
+            
+            // 中文版句子模板
+            const chineseSentenceTemplates = {
+                names: [
+                    "在学校他们叫我\"{nameForeign}\"，但我的心回应的是\"{nameLocal}\"。",
+                    "我的身份证上写着\"{nameForeign}\"，但我的祖母仍然叫我\"{nameLocal}\"。",
+                    "有些日子我介绍自己为\"{nameForeign}\"，其他日子我是\"{nameLocal}\"。",
+                    "我已经练习写\"{nameForeign}\"太多次，有时候我忘记怎么写\"{nameLocal}\"。",
+                    "在他们的世界里我是\"{nameForeign}\"，在我的世界里我是\"{nameLocal}\"。"
+                ],
+                
+                food: [
+                    "我已经忘记如何用母语书写我的名字，但我记得每个周末{food}的味道。",
+                    "{food}的香味把我带回到一个我几乎不记得的地方。",
+                    "我梦见{food}——一种我无法完全向新朋友描述的家乡味道。",
+                    "我母亲的{food}食谱，当我自己做时永远不会有同样的味道。",
+                    "我发现自己在异国餐厅吃{food}时流泪，对自己的反应感到惊讶。"
+                ],
+                
+                identity: [
+                    "我属于一个从未真正了解我的城市，和一个忘记如何解释我变成什么样的家庭。",
+                    "我的口音随着交谈对象而变化——一只为了生存而适应的变色龙。",
+                    "家是一个我已经重新定义太多次的概念。",
+                    "我像人类学家一样研究自己的文化传统，试图理解自己的遗产。",
+                    "我学习的语言越多，我发现自己的版本就越多。"
+                ],
+                
+                language: [
+                    "有些夜晚我用英语做梦，用我的母语哭泣。",
+                    "说话前我会翻译自己的想法，一个没人看见的秘密过程。",
+                    "有些感受我只能用母语表达。",
+                    "无论离开多久，我仍用第一语言计数和祈祷。",
+                    "我用灵魂的不同部分说不同的语言。"
+                ],
+                
+                floating: [
+                    "我像一座漂流在两个世界之间的孤岛。",
+                    "我存在于文化之间的空间中，从未完全属于任何地方。",
+                    "我的身份是我去过的地方不断变化的马赛克。",
+                    "我像幽灵一样在世界之间导航——存在但永远不完全可见。",
+                    "我在文化身份之间的连字符中建立了自己的家。"
+                ],
+                
+                ending: [
+                    "我是谁？\n你告诉我。",
+                    "我属于哪里？\n或许无处亦处处。",
+                    "拥有根基意味着什么？\n我仍在学习。",
+                    "我是来自这里还是那里？\n答案随着月亮变化。",
+                    "我何时才能有家的感觉？\n也许是当我停止问这个问题的时候。"
+                ]
+            };
+            
+            // 随机选择一个数组中的元素
+            function getRandomElement(array) {
+                return array[Math.floor(Math.random() * array.length)];
+            }
+            
+            // 创建语言选择器
+            const languageSelector = document.createElement('select');
+            languageSelector.id = 'output-language';
+            languageSelector.innerHTML = `
+                <option value="original">Original</option>
+                <option value="chinese">中文</option>
+            `;
+            
+            // 添加到DOM
+            const selectorContainer = document.getElementById('language-selector-container');
+            selectorContainer.appendChild(languageSelector);
+            
+            // 添加语言切换功能
+            languageSelector.addEventListener('change', function() {
+                if (currentText && this.value === 'chinese') {
+                    // 获取基本数据生成中文版本
+                    const nameLocal = document.getElementById('name-local').value;
+                    const nameForeign = document.getElementById('name-foreign').value;
+                    const food = document.getElementById('food').value;
+                    
+                    // 生成随机中文独白
+                    const nameSentence = getRandomElement(chineseSentenceTemplates.names)
+                        .replace('{nameLocal}', nameLocal)
+                        .replace('{nameForeign}', nameForeign);
+                    
+                    const foodSentence = getRandomElement(chineseSentenceTemplates.food)
+                        .replace('{food}', food);
+                    
+                    const identitySentence = getRandomElement(chineseSentenceTemplates.identity);
+                    const languageSentence = getRandomElement(chineseSentenceTemplates.language);
+                    const floatingSentence = getRandomElement(chineseSentenceTemplates.floating);
+                    const endingSentence = getRandomElement(chineseSentenceTemplates.ending);
+                    
+                    // 组合中文独白
+                    const chineseText = `${nameSentence}
+                    
+${foodSentence}
+
+${identitySentence}
+
+${languageSentence}
+
+${floatingSentence}
+
+${endingSentence}`;
+                    
+                    outputText.innerHTML = chineseText;
+                } else {
+                    // 恢复原文
+                    outputText.innerHTML = currentText;
+                }
+            });
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // 收集基本数据
+                const nameLocal = document.getElementById('name-local').value;
+                const nameForeign = document.getElementById('name-foreign').value;
+                const food = document.getElementById('food').value;
+                
+                // 获取选中的文化背景
+                const culturalBg = Array.from(document.querySelectorAll('input[name="cultural-bg"]:checked'))
+                    .map(checkbox => checkbox.value);
+                
+                // 获取选中的语言
+                const languages = Array.from(document.querySelectorAll('input[name="language"]:checked'))
+                    .map(checkbox => checkbox.value);
+                
+                // 获取选中的感受
+                const feeling = document.querySelector('input[name="feeling"]:checked').value;
+                
+                // 保存当前独白数据用于上传
+                currentMonologue = {
+                    nameLocal,
+                    nameForeign,
+                    food,
+                    culturalBg,
+                    languages,
+                    feeling,
+                    text: '',
+                    timestamp: new Date().toISOString()
+                };
+                
+                // 生成随机独白
+                const nameSentence = getRandomElement(sentenceTemplates.names)
+                    .replace('{nameLocal}', nameLocal)
+                    .replace('{nameForeign}', nameForeign);
+                
+                const foodSentence = getRandomElement(sentenceTemplates.food)
+                    .replace('{food}', food);
+                
+                const identitySentence = getRandomElement(sentenceTemplates.identity);
+                const languageSentence = getRandomElement(sentenceTemplates.language);
+                const floatingSentence = getRandomElement(sentenceTemplates.floating);
+                const endingSentence = getRandomElement(sentenceTemplates.ending);
+                
+                // 组合独白
+                currentText = `${nameSentence}
+                
+${foodSentence}
+
+${identitySentence}
+
+${languageSentence}
+
+${floatingSentence}
+
+${endingSentence}`;
+
+                currentMonologue.text = currentText;
+                
+                // 显示结果
+                outputContainer.style.display = 'flex';
+                outputContainer.querySelector('.actions').classList.remove('hidden');
+                outputText.innerHTML = currentText;
+                
+                // 重置语言选择器
+                languageSelector.value = 'original';
+            });
+            
+            // 保存图片功能
+            document.getElementById('save-btn').addEventListener('click', function() {
+                alert('下载功能将在未来版本中提供');
+            });
+            
+            // 上传到记忆收集器功能
+            document.getElementById('upload-btn').addEventListener('click', function() {
+                // 上传当前独白到服务器或本地存储
+                if(!currentMonologue.text) {
+                    alert('请先生成一个独白');
+                    return;
+                }
+                
+                // 暂时使用localStorage存储数据
+                let memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+                memories.push(currentMonologue);
+                localStorage.setItem('nowhere-native-memories', JSON.stringify(memories));
+                
+                alert('Your monologue has been collected. Check all collected monologues in the "Memory Box".');
+                
+                // 打开展示页面
+                window.open('memories.html', '_blank');
+            });
+            
+            // 重新生成功能
+            document.getElementById('regenerate-btn').addEventListener('click', function() {
+                form.dispatchEvent(new Event('submit'));
+            });
+        });
+    </script>
+</body>
+</html> 

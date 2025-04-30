@@ -1,0 +1,85 @@
+{
+  "templates": {
+    "intro": [
+      "他们在学校叫我\"{foreignName}\"，但我的{relative}仍然轻声呼唤我\"{localName}\"。",
+      "在{placeWestern}，我是{foreignName}；在{placeNative}，我是{localName}。",
+      "{relative}说我的名字是{localName}，但我的朋友只知道我是{foreignName}。",
+      "我的证件上写着{foreignName}，但我心里回应的是{localName}。"
+    ],
+    "memory": [
+      "我忘了如何用母语写我的名字，\n但我记得每个{dayOfWeek}{foodMemory}的味道。",
+      "我已经不记得怎么说\"{phraseForgotten}\"，\n但{foodMemory}的香气仍然让我想起家。",
+      "有时候我会忘记{phraseForgotten}怎么说，\n但{foodMemory}的味道从未从我记忆中消失。",
+      "我的舌头已经忘记了{nativeLanguage}的音调，\n但我的胃仍然记得{foodMemory}的温度。"
+    ],
+    "belonging": [
+      "我属于从未真正了解我的城市，\n也属于忘记了如何解释我变成了谁的家人。",
+      "我的根扎在{placeNative}的土壤里，\n却在{placeWestern}的空气中呼吸。",
+      "我站在{placeWestern}的街道上像个游客，\n站在{placeNative}的家中像个陌生人。",
+      "当我在{placeWestern}，我想念{placeNative}；\n当我在{placeNative}，我怀念{placeWestern}。"
+    ],
+    "language": [
+      "有些夜晚我用{foreignLanguage}做梦，\n用{nativeLanguage}道歉。",
+      "我的思绪在{foreignLanguage}和{nativeLanguage}之间跳跃，\n却从未完整地表达我自己。",
+      "我的笑话在{foreignLanguage}中失去了灵魂，\n我的情感在{nativeLanguage}里找不到词汇。",
+      "我用{foreignLanguage}思考，\n用{nativeLanguage}哭泣。"
+    ],
+    "question": [
+      "我是谁？\n你告诉我。",
+      "我的家在哪里？\n大概在地图上找不到。",
+      "我属于哪里？\n可能哪里都是，也可能哪里都不是。",
+      "我的故事从哪里开始？\n从航班号和签证日期。"
+    ]
+  },
+  "relatives": [
+    "奶奶", "外婆", "妈妈", "爸爸", "阿姨", "叔叔", "父亲", "母亲"
+  ],
+  "dayOfWeek": [
+    "星期日", "星期天", "周末", "星期六", "假日"
+  ],
+  "phrasesForgotten": [
+    "我想你", "对不起", "我爱你", "谢谢", "再见", "欢迎回家", "晚安", "祝福"
+  ],
+  "feelings": {
+    "lost": {
+      "tone": "迷茫",
+      "phrases": [
+        "我像漂流在两个世界之间的孤岛。",
+        "我是被遗忘的翻译，永远在中间地带。",
+        "我的根已经松动，却无处可重新扎根。"
+      ]
+    },
+    "proud": {
+      "tone": "自豪",
+      "phrases": [
+        "我是两个世界的桥梁，双重视角的持有者。",
+        "我在边界行走，却拥有更广阔的天空。",
+        "我的身份是一幅拼图，由多种色彩组成。"
+      ]
+    },
+    "conflicted": {
+      "tone": "矛盾",
+      "phrases": [
+        "我的灵魂被撕裂成两半，永远无法完整。",
+        "我站在十字路口，却不知道该走哪条路。",
+        "我同时渴望融入与渴望与众不同。"
+      ]
+    },
+    "nostalgic": {
+      "tone": "怀旧",
+      "phrases": [
+        "我怀念一个可能从未真正存在的家。",
+        "我收集记忆的碎片，试图拼凑我的过去。",
+        "我的童年是一本用两种语言写成的书。"
+      ]
+    },
+    "alienated": {
+      "tone": "疏离",
+      "phrases": [
+        "我永远是局外人，无论我走到哪里。",
+        "我穿上隐形斗篷，假装我属于这里。",
+        "我学会了模仿，却忘记了如何做真实的自己。"
+      ]
+    }
+  }
+} 

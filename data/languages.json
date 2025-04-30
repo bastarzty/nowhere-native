@@ -1,0 +1,72 @@
+{
+  "chinese": {
+    "name": "中文",
+    "greeting": "你好",
+    "farewell": "再见",
+    "love": "爱",
+    "home": "家",
+    "phrases": [
+      "对不起", "谢谢", "我想你", "祝福", "加油", "一切都会好起来"
+    ]
+  },
+  "english": {
+    "name": "English",
+    "greeting": "Hello",
+    "farewell": "Goodbye",
+    "love": "Love",
+    "home": "Home",
+    "phrases": [
+      "Sorry", "Thank you", "I miss you", "Blessings", "Hang in there", "Everything will be alright"
+    ]
+  },
+  "korean": {
+    "name": "한국어",
+    "greeting": "안녕하세요",
+    "farewell": "안녕히 계세요",
+    "love": "사랑",
+    "home": "집",
+    "phrases": [
+      "죄송합니다", "감사합니다", "보고 싶어요", "축복", "힘내세요", "모든 게 잘 될 거예요"
+    ]
+  },
+  "japanese": {
+    "name": "日本語",
+    "greeting": "こんにちは",
+    "farewell": "さようなら",
+    "love": "愛",
+    "home": "家",
+    "phrases": [
+      "ごめんなさい", "ありがとう", "会いたい", "祝福", "頑張って", "大丈夫になるよ"
+    ]
+  },
+  "french": {
+    "name": "Français",
+    "greeting": "Bonjour",
+    "farewell": "Au revoir",
+    "love": "Amour",
+    "home": "Maison",
+    "phrases": [
+      "Désolé", "Merci", "Tu me manques", "Bénédictions", "Courage", "Tout ira bien"
+    ]
+  },
+  "spanish": {
+    "name": "Español",
+    "greeting": "Hola",
+    "farewell": "Adiós",
+    "love": "Amor",
+    "home": "Hogar",
+    "phrases": [
+      "Lo siento", "Gracias", "Te extraño", "Bendiciones", "Ánimo", "Todo estará bien"
+    ]
+  },
+  "other": {
+    "name": "其他语言",
+    "greeting": "问候",
+    "farewell": "告别",
+    "love": "爱",
+    "home": "家",
+    "phrases": [
+      "抱歉", "感谢", "想念", "祝福", "鼓励", "希望"
+    ]
+  }
+} 
