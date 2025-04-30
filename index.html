@@ -168,20 +168,6 @@
             background-color: #5095db;
         }
         
-        .secondary-btn {
-            background-color: rgba(100, 181, 246, 0.3);
-            color: white;
-            border: 1px solid rgba(100, 181, 246, 0.5);
-            margin-top: 0.5rem;
-            font-size: 0.9rem;
-            padding: 0.6rem 1rem;
-            width: auto;
-        }
-        
-        .secondary-btn:hover {
-            background-color: rgba(100, 181, 246, 0.5);
-        }
-        
         form button {
             display: block;
             margin: 2rem auto 0;
@@ -307,15 +293,6 @@
                 <div class="form-group">
                     <label for="food">Food from Home/Childhood Memory</label>
                     <input type="text" id="food" placeholder="e.g., dumplings, kimchi, biryani..." required>
-                </div>
-
-                <div class="form-group">
-                    <label for="location">Memory Location</label>
-                    <div class="input-pair">
-                        <input type="text" id="location-name" placeholder="Place name (e.g. Shanghai, Paris)" required>
-                        <input type="text" id="location-coords" placeholder="Coordinates (optional)" >
-                    </div>
-                    <button type="button" id="pick-location" class="secondary-btn">Pick on Map</button>
                 </div>
 
                 <div class="form-group">
@@ -513,22 +490,6 @@
             const selectorContainer = document.getElementById('language-selector-container');
             selectorContainer.appendChild(languageSelector);
             
-            // 地理位置选择功能
-            const pickLocationBtn = document.getElementById('pick-location');
-            let selectedLocation = null;
-            
-            pickLocationBtn.addEventListener('click', function() {
-                // 打开一个新窗口或对话框让用户选择地点
-                window.open('map-picker.html', 'mapPicker', 'width=600,height=450');
-                
-                // 设置一个全局回调函数，让地图选择器可以调用
-                window.setSelectedLocation = function(locationName, lat, lng) {
-                    document.getElementById('location-name').value = locationName;
-                    document.getElementById('location-coords').value = lat + ',' + lng;
-                    selectedLocation = { name: locationName, lat: lat, lng: lng };
-                };
-            });
-            
             // 添加语言切换功能
             languageSelector.addEventListener('change', function() {
                 if (currentText && this.value === 'chinese') {
@@ -589,19 +550,6 @@ ${endingSentence}`;
                 // 获取选中的感受
                 const feeling = document.querySelector('input[name="feeling"]:checked').value;
                 
-                // 获取地理位置信息
-                const locationName = document.getElementById('location-name').value;
-                const locationCoords = document.getElementById('location-coords').value;
-                let location = { name: locationName };
-                
-                if (locationCoords) {
-                    const [lat, lng] = locationCoords.split(',').map(Number);
-                    location.lat = lat;
-                    location.lng = lng;
-                } else if (selectedLocation) {
-                    location = selectedLocation;
-                }
-                
                 // 保存当前独白数据用于上传
                 currentMonologue = {
                     nameLocal,
@@ -610,7 +558,7 @@ ${endingSentence}`;
                     culturalBg,
                     languages,
                     feeling,
-                    location,
+                    location: null,
                     text: '',
                     timestamp: new Date().toISOString()
                 };
@@ -675,16 +623,6 @@ ${endingSentence}`;
                 // 打开展示页面
                 window.open('memories.html', '_blank');
             });
-            
-            // 添加"查看记忆地图"按钮
-            const actionsContainer = document.querySelector('.actions');
-            const mapViewBtn = document.createElement('button');
-            mapViewBtn.textContent = '查看记忆地图';
-            mapViewBtn.id = 'view-map-btn';
-            mapViewBtn.addEventListener('click', function() {
-                window.open('memory-map.html', '_blank');
-            });
-            actionsContainer.appendChild(mapViewBtn);
             
             // 重新生成功能
             document.getElementById('regenerate-btn').addEventListener('click', function() {
