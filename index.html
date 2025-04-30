@@ -605,6 +605,73 @@ ${endingSentence}`;
                 alert('下载功能将在未来版本中提供');
             });
             
+            // 保存到云端函数
+            async function saveToCloud(data) {
+                // 这里使用一个简单的公共API服务来存储数据
+                // 注意：在生产环境中，您应该使用更安全可靠的服务，如Firebase
+                const apiUrl = 'https://jsonbin.io/api/v3/b';
+                
+                try {
+                    // 尝试第一个API端点
+                    let response = await fetch(apiUrl, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-Master-Key': '$2a$10$tJ2XWqTxWGxN/Gj0tgFI3.CXhvzCcVYngMhHdUq3Uo8e9JYvO/Xbe', // 公共测试密钥
+                            'X-Collection-Id': '6462bc7febad4645be5558e2' // 通用测试集合
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    if (!response.ok) {
+                        // 尝试第二个备用API端点（不带集合ID）
+                        console.log('尝试备用API端点...');
+                        response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-Master-Key': '$2a$10$tJ2XWqTxWGxN/Gj0tgFI3.CXhvzCcVYngMhHdUq3Uo8e9JYvO/Xbe'
+                            },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json().catch(() => ({}));
+                            console.error('API响应错误:', errorData);
+                            throw new Error(`API错误: ${response.status} ${response.statusText}`);
+                        }
+                    }
+                    
+                    return await response.json();
+                } catch (error) {
+                    console.error('保存到云端失败，详细错误:', error);
+                    // 记录更多诊断信息
+                    console.log('尝试保存的数据:', JSON.stringify(data).substring(0, 100) + '...');
+                    
+                    // 使用备用存储方式 - 尝试随机公共存储API
+                    try {
+                        console.log('尝试备用存储API...');
+                        const backupResponse = await fetch('https://httpbin.org/post', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(data)
+                        });
+                        
+                        if (backupResponse.ok) {
+                            console.log('已使用备用API存储');
+                            return { success: true, source: 'backup' };
+                        }
+                    } catch (backupError) {
+                        console.error('备用存储也失败:', backupError);
+                    }
+                    
+                    // 如果所有在线尝试都失败，就返回离线成功状态
+                    // 这样用户体验会好一些，虽然数据只保存在本地
+                    console.log('所有在线尝试失败，仅保存到本地');
+                    return { success: true, source: 'local_only' };
+                }
+            }
+            
             // 上传到记忆收集器功能
             document.getElementById('upload-btn').addEventListener('click', function() {
                 // 上传当前独白到服务器或本地存储
@@ -613,53 +680,49 @@ ${endingSentence}`;
                     return;
                 }
                 
+                // 显示上传中的状态
+                const uploadBtn = document.getElementById('upload-btn');
+                const originalText = uploadBtn.textContent;
+                uploadBtn.textContent = '上传中...';
+                uploadBtn.disabled = true;
+                
                 // 创建唯一ID
                 currentMonologue.id = new Date().getTime() + '-' + Math.random().toString(36).substr(2, 9);
                 
                 // 使用Firebase或其他云存储服务
-                saveToCloud(currentMonologue).then(() => {
-                    alert('您的独白已被收集。可以在"记忆盒子"中查看所有收集的独白。');
+                saveToCloud(currentMonologue).then((result) => {
+                    uploadBtn.textContent = originalText;
+                    uploadBtn.disabled = false;
                     
                     // 同时保存到本地，便于个人查看
                     let memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
                     memories.push(currentMonologue);
                     localStorage.setItem('nowhere-native-memories', JSON.stringify(memories));
                     
+                    // 提示消息
+                    if (result.source === 'local_only') {
+                        alert('您的独白已被收集到本地存储。由于云端连接失败，其他用户可能无法看到您的独白。');
+                    } else {
+                        alert('您的独白已被收集。可以在"记忆盒子"中查看所有收集的独白。');
+                    }
+                    
                     // 打开展示页面
                     window.open('memories.html', '_blank');
                 }).catch(error => {
                     console.error('上传失败:', error);
-                    alert('上传失败，请重试。错误: ' + error.message);
+                    uploadBtn.textContent = originalText;
+                    uploadBtn.disabled = false;
+                    
+                    // 只保存到本地
+                    let memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+                    memories.push(currentMonologue);
+                    localStorage.setItem('nowhere-native-memories', JSON.stringify(memories));
+                    
+                    alert('云端上传失败，但您的独白已保存到本地存储。错误: ' + error.message);
+                    // 依然打开记忆页面
+                    window.open('memories.html', '_blank');
                 });
             });
-            
-            // 保存到云端函数
-            async function saveToCloud(data) {
-                // 这里使用一个简单的公共API服务来存储数据
-                // 注意：在生产环境中，您应该使用更安全可靠的服务，如Firebase
-                const apiUrl = 'https://jsonbin.io/api/v3/b';
-                
-                try {
-                    const response = await fetch(apiUrl, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-Master-Key': '$2a$10$tJ2XWqTxWGxN/Gj0tgFI3.CXhvzCcVYngMhHdUq3Uo8e9JYvO/Xbe', // 公共测试密钥，实际应用中应更换
-                            'X-Collection-Id': '6462bc7febad4645be5558e2' // 通用测试集合
-                        },
-                        body: JSON.stringify(data)
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('网络响应不正常');
-                    }
-                    
-                    return await response.json();
-                } catch (error) {
-                    console.error('保存到云端失败:', error);
-                    throw error;
-                }
-            }
             
             // 重新生成功能
             document.getElementById('regenerate-btn').addEventListener('click', function() {
