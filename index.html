@@ -188,6 +188,84 @@
             width: 200px;
         }
         
+        /* 表单分页样式 */
+        .form-navigation {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-indicator {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .page {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+        
+        .page.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .form-page {
+            display: none;
+        }
+        
+        .form-page.active {
+            display: block;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .next-btn, .prev-btn {
+            background-color: rgba(100, 181, 246, 0.3);
+            color: white;
+            border: 1px solid rgba(100, 181, 246, 0.5);
+        }
+        
+        .next-btn:hover, .prev-btn:hover {
+            background-color: rgba(100, 181, 246, 0.5);
+        }
+        
+        .field-description {
+            font-size: 0.9rem;
+            margin: 0.3rem 0;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        .field-example {
+            font-size: 0.8rem;
+            margin: 0.2rem 0 0.5rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-style: italic;
+        }
+        
+        textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            font-family: inherit;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
         .monologue-container {
             background-color: rgba(255, 255, 255, 0.05);
             border-radius: 12px;
@@ -250,77 +328,130 @@
         </header>
 
         <section class="input-form">
-            <h2>Create Your Identity Monologue</h2>
+            <h2>创建你的文化身份独白</h2>
+            <div class="form-navigation">
+                <div class="page-indicator">
+                    <span class="page active" data-page="1">1</span>
+                    <span class="page" data-page="2">2</span>
+                </div>
+            </div>
+            
             <form id="identity-form">
-                <div class="form-group">
-                    <label for="name">Your Names (In Different Languages)</label>
-                    <div class="input-pair">
-                        <input type="text" id="name-local" placeholder="Name in your native language" required>
-                        <input type="text" id="name-foreign" placeholder="Your adopted name" required>
+                <!-- 第一页表单 -->
+                <div class="form-page active" id="form-page-1">
+                    <div class="form-group">
+                        <label for="name">你的名字（不同语言）</label>
+                        <div class="input-pair">
+                            <input type="text" id="name-local" placeholder="你的母语名字" required>
+                            <input type="text" id="name-foreign" placeholder="你的外语名字" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>你会说的语言（选择所有适用的）</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="language" value="chinese"> 中文</label>
+                            <label><input type="checkbox" name="language" value="english"> 英文</label>
+                            <label><input type="checkbox" name="language" value="korean"> 韩文</label>
+                            <label><input type="checkbox" name="language" value="japanese"> 日文</label>
+                            <label><input type="checkbox" name="language" value="french"> 法文</label>
+                            <label><input type="checkbox" name="language" value="spanish"> 西班牙文</label>
+                            <label><input type="checkbox" name="language" value="arabic"> 阿拉伯文</label>
+                            <label><input type="checkbox" name="language" value="hindi"> 印地文</label>
+                            <label><input type="checkbox" name="language" value="other"> 其他</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="native-language">你的主要语言</label>
+                        <select id="native-language" required>
+                            <option value="">-- 选择主要语言 --</option>
+                            <option value="chinese">中文</option>
+                            <option value="english">英文</option>
+                            <option value="korean">韩文</option>
+                            <option value="japanese">日文</option>
+                            <option value="french">法文</option>
+                            <option value="spanish">西班牙文</option>
+                            <option value="arabic">阿拉伯文</option>
+                            <option value="hindi">印地文</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>文化背景（选择所有适用的）</label>
+                        <div class="checkbox-group">
+                            <label><input type="checkbox" name="cultural-bg" value="east-asia"> 东亚</label>
+                            <label><input type="checkbox" name="cultural-bg" value="western"> 西方</label>
+                            <label><input type="checkbox" name="cultural-bg" value="southeast-asia"> 东南亚</label>
+                            <label><input type="checkbox" name="cultural-bg" value="south-asia"> 南亚</label>
+                            <label><input type="checkbox" name="cultural-bg" value="middle-east"> 中东</label>
+                            <label><input type="checkbox" name="cultural-bg" value="africa"> 非洲</label>
+                            <label><input type="checkbox" name="cultural-bg" value="latin-america"> 拉丁美洲</label>
+                        </div>
+                    </div>
+                    
+                    <button type="button" id="next-page-btn" class="next-btn">下一页</button>
+                </div>
+                
+                <!-- 第二页表单 -->
+                <div class="form-page" id="form-page-2">
+                    <div class="form-group">
+                        <label for="food">家的味道 (Flavors of Home)</label>
+                        <p class="field-description">描述一道与家或童年记忆紧密相连的食物、菜肴或味道。</p>
+                        <p class="field-example">例如："我母亲自制的泡菜汤。"</p>
+                        <input type="text" id="food" placeholder="分享一道家乡美食..." required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="soundtrack">你的生活配乐 (Soundtrack of You)</label>
+                        <p class="field-description">分享一首与你的身份或归属感产生共鸣的歌曲、声音或音乐类型。</p>
+                        <input type="text" id="soundtrack" placeholder="分享一首代表你的歌曲...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="home-place">你称之为家的地方 (Place You Call Home)</label>
+                        <p class="field-description">描述一个或多个你感到深度连接或强烈归属感的特定地点。</p>
+                        <p class="field-example">例如："首尔我童年公寓的阳台。"</p>
+                        <input type="text" id="home-place" placeholder="描述你称为家的地方...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="object">重要物品 (An Object of Significance)</label>
+                        <p class="field-description">分享一个象征你身份或旅程的物品。</p>
+                        <p class="field-example">例如："我那本满是印章的破旧护照。"</p>
+                        <input type="text" id="object" placeholder="描述一个对你有意义的物品...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="aspiration">梦想与抱负 (Dreams and Aspirations)</label>
+                        <p class="field-description">简要描述一个由你的文化背景或个人旅程塑造的梦想、目标或抱负。</p>
+                        <p class="field-example">例如："开一家融合我两种文化风味的咖啡馆。"</p>
+                        <input type="text" id="aspiration" placeholder="分享你的梦想...">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="belonging">归属或疏离的经历 (Experiences of Belonging or Alienation)</label>
+                        <p class="field-description">可选：分享一段与你的文化身份深度连接或深度脱节的简短记忆或经历。</p>
+                        <textarea id="belonging" placeholder="分享你的经历..."></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>你对自己的文化身份有何感受？</label>
+                        <div class="radio-group">
+                            <label><input type="radio" name="feeling" value="lost" checked> 迷失</label>
+                            <label><input type="radio" name="feeling" value="proud"> 自豪</label>
+                            <label><input type="radio" name="feeling" value="conflicted"> 矛盾</label>
+                            <label><input type="radio" name="feeling" value="nostalgic"> 怀旧</label>
+                            <label><input type="radio" name="feeling" value="alienated"> 疏离</label>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button type="button" id="prev-page-btn" class="prev-btn">上一页</button>
+                        <button type="submit">生成独白</button>
                     </div>
                 </div>
-
-                <div class="form-group">
-                    <label>Languages You Speak (Select all that apply)</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="language" value="chinese"> Chinese</label>
-                        <label><input type="checkbox" name="language" value="english"> English</label>
-                        <label><input type="checkbox" name="language" value="korean"> Korean</label>
-                        <label><input type="checkbox" name="language" value="japanese"> Japanese</label>
-                        <label><input type="checkbox" name="language" value="french"> French</label>
-                        <label><input type="checkbox" name="language" value="spanish"> Spanish</label>
-                        <label><input type="checkbox" name="language" value="arabic"> Arabic</label>
-                        <label><input type="checkbox" name="language" value="hindi"> Hindi</label>
-                        <label><input type="checkbox" name="language" value="other"> Other</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="native-language">Your Primary Language</label>
-                    <select id="native-language" required>
-                        <option value="">-- Select Primary Language --</option>
-                        <option value="chinese">Chinese</option>
-                        <option value="english">English</option>
-                        <option value="korean">Korean</option>
-                        <option value="japanese">Japanese</option>
-                        <option value="french">French</option>
-                        <option value="spanish">Spanish</option>
-                        <option value="arabic">Arabic</option>
-                        <option value="hindi">Hindi</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Cultural Background (Select all that apply)</label>
-                    <div class="checkbox-group">
-                        <label><input type="checkbox" name="cultural-bg" value="east-asia"> East Asian</label>
-                        <label><input type="checkbox" name="cultural-bg" value="western"> Western</label>
-                        <label><input type="checkbox" name="cultural-bg" value="southeast-asia"> Southeast Asian</label>
-                        <label><input type="checkbox" name="cultural-bg" value="south-asia"> South Asian</label>
-                        <label><input type="checkbox" name="cultural-bg" value="middle-east"> Middle Eastern</label>
-                        <label><input type="checkbox" name="cultural-bg" value="africa"> African</label>
-                        <label><input type="checkbox" name="cultural-bg" value="latin-america"> Latin American</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label for="food">Food from Home/Childhood Memory</label>
-                    <input type="text" id="food" placeholder="e.g., dumplings, kimchi, biryani..." required>
-                </div>
-
-                <div class="form-group">
-                    <label>How Do You Feel About Your Cultural Identity?</label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="feeling" value="lost" checked> Lost</label>
-                        <label><input type="radio" name="feeling" value="proud"> Proud</label>
-                        <label><input type="radio" name="feeling" value="conflicted"> Conflicted</label>
-                        <label><input type="radio" name="feeling" value="nostalgic"> Nostalgic</label>
-                        <label><input type="radio" name="feeling" value="alienated"> Alienated</label>
-                    </div>
-                </div>
-
-                <button type="submit">Generate Monologue</button>
             </form>
         </section>
 
@@ -371,6 +502,68 @@
                 
                 starsContainer.appendChild(star);
             }
+            
+            // 表单分页控制
+            const nextPageBtn = document.getElementById('next-page-btn');
+            const prevPageBtn = document.getElementById('prev-page-btn');
+            const page1 = document.getElementById('form-page-1');
+            const page2 = document.getElementById('form-page-2');
+            const pageIndicators = document.querySelectorAll('.page');
+            
+            // 切换到下一页
+            nextPageBtn.addEventListener('click', function() {
+                // 检查第一页的必填字段
+                const nameLocal = document.getElementById('name-local').value;
+                const nameForeign = document.getElementById('name-foreign').value;
+                const nativeLanguage = document.getElementById('native-language').value;
+                
+                if (!nameLocal || !nameForeign || !nativeLanguage) {
+                    alert('请填写所有必填字段后再继续');
+                    return;
+                }
+                
+                page1.classList.remove('active');
+                page2.classList.add('active');
+                pageIndicators[0].classList.remove('active');
+                pageIndicators[1].classList.add('active');
+            });
+            
+            // 切换到上一页
+            prevPageBtn.addEventListener('click', function() {
+                page2.classList.remove('active');
+                page1.classList.add('active');
+                pageIndicators[1].classList.remove('active');
+                pageIndicators[0].classList.add('active');
+            });
+            
+            // 点击页面指示器
+            pageIndicators.forEach(indicator => {
+                indicator.addEventListener('click', function() {
+                    const targetPage = this.getAttribute('data-page');
+                    
+                    if (targetPage === '1') {
+                        page2.classList.remove('active');
+                        page1.classList.add('active');
+                        pageIndicators[1].classList.remove('active');
+                        pageIndicators[0].classList.add('active');
+                    } else if (targetPage === '2') {
+                        // 检查第一页的必填字段
+                        const nameLocal = document.getElementById('name-local').value;
+                        const nameForeign = document.getElementById('name-foreign').value;
+                        const nativeLanguage = document.getElementById('native-language').value;
+                        
+                        if (!nameLocal || !nameForeign || !nativeLanguage) {
+                            alert('请填写所有必填字段后再继续');
+                            return;
+                        }
+                        
+                        page1.classList.remove('active');
+                        page2.classList.add('active');
+                        pageIndicators[0].classList.remove('active');
+                        pageIndicators[1].classList.add('active');
+                    }
+                });
+            });
             
             // 简单测试文本显示
             const form = document.getElementById('identity-form');
@@ -433,6 +626,42 @@
                     "What does it mean to have roots?\nI'm still learning.",
                     "Am I from here or there?\nThe answer changes with the moon.",
                     "When will I feel at home?\nMaybe when I stop asking this question."
+                ],
+                
+                // 家的地方
+                place: [
+                    "I remember {place} - not as a location, but as a feeling I carry with me.",
+                    "Sometimes I close my eyes and imagine myself back at {place}, where everything made sense.",
+                    "{place} exists now only in my memory, a place I can visit but never stay.",
+                    "The distance between me and {place} grows wider with each passing year.",
+                    "I've recreated little corners of {place} wherever I've lived."
+                ],
+                
+                // 重要物品
+                object: [
+                    "My {object} has traveled with me across borders, a silent witness to my transformation.",
+                    "I keep my {object} close, a tangible reminder of who I used to be.",
+                    "The {object} connects me to a past that sometimes feels like someone else's life.",
+                    "I touch my {object} when I need to remember where I came from.",
+                    "My {object} holds stories I cannot fully translate."
+                ],
+                
+                // 音乐
+                soundtrack: [
+                    "The melody of {soundtrack} follows me like a shadow, connecting fragments of my scattered self.",
+                    "I play {soundtrack} when homesickness becomes unbearable.",
+                    "In the notes of {soundtrack}, I find echoes of a self I left behind.",
+                    "{soundtrack} bridges the gap between my past and present.",
+                    "The rhythm of {soundtrack} beats in sync with a heart caught between worlds."
+                ],
+                
+                // 梦想
+                dreams: [
+                    "My dream to {dream} is rooted in the collision of my divided identities.",
+                    "I wonder if achieving {dream} will finally make me feel whole.",
+                    "The path to {dream} is complicated by the expectations of multiple cultures.",
+                    "My ancestors would not understand my desire to {dream}, and that's both liberating and terrifying.",
+                    "I pursue {dream} as a way to reconcile the different worlds inside me."
                 ]
             };
             
@@ -484,6 +713,38 @@
                     "拥有根基意味着什么？\n我仍在学习。",
                     "我是来自这里还是那里？\n答案随着月亮变化。",
                     "我何时才能有家的感觉？\n也许是当我停止问这个问题的时候。"
+                ],
+                
+                place: [
+                    "我记得{place} - 不是作为一个地点，而是作为我随身携带的一种感觉。",
+                    "有时我闭上眼睛想象自己回到{place}，那里一切都有意义。",
+                    "{place}现在只存在于我的记忆中，一个我可以参观但永远不能停留的地方。",
+                    "我与{place}之间的距离随着岁月流逝而变得越来越宽。",
+                    "我在我生活过的每个地方都重新创造了{place}的一些角落。"
+                ],
+                
+                object: [
+                    "我的{object}跨越边境与我同行，默默见证了我的转变。",
+                    "我把{object}放在身边，是我曾经的自己的有形提醒。",
+                    "{object}将我连接到一个有时感觉像别人生活的过去。",
+                    "当我需要记住我来自哪里时，我会触摸我的{object}。",
+                    "我的{object}承载着我无法完全翻译的故事。"
+                ],
+                
+                soundtrack: [
+                    "{soundtrack}的旋律像影子一样跟随着我，连接着我分散的自我碎片。",
+                    "当思乡之情变得难以忍受时，我会播放{soundtrack}。",
+                    "在{soundtrack}的音符中，我发现了我留下的自我的回声。",
+                    "{soundtrack}弥合了我过去和现在之间的鸿沟。",
+                    "{soundtrack}的节奏与一颗被困在世界之间的心同步跳动。"
+                ],
+                
+                dreams: [
+                    "我{dream}的梦想源于我分裂身份的碰撞。",
+                    "我想知道实现{dream}是否最终会让我感到完整。",
+                    "通往{dream}的道路因多种文化的期望而变得复杂。",
+                    "我的祖先不会理解我{dream}的愿望，这既解放又可怕。",
+                    "我追求{dream}作为调和我内心不同世界的方式。"
                 ]
             };
             
@@ -504,28 +765,79 @@
             const selectorContainer = document.getElementById('language-selector-container');
             selectorContainer.appendChild(languageSelector);
             
-            // 获取选中的感受
-            const feeling = document.querySelector('input[name="feeling"]:checked').value;
-            
-            // 保存当前独白数据用于上传
-            currentMonologue = {
-                nameLocal,
-                nameForeign,
-                food,
-                culturalBg,
-                languages,
-                feeling,
-                text: '',
-                timestamp: new Date().toISOString()
-            };
+            // 添加语言切换功能
+            languageSelector.addEventListener('change', function() {
+                if (currentText && this.value === 'chinese') {
+                    // 获取基本数据
+                    const nameLocal = document.getElementById('name-local').value;
+                    const nameForeign = document.getElementById('name-foreign').value;
+                    const food = document.getElementById('food').value;
+                    const place = document.getElementById('home-place').value;
+                    const object = document.getElementById('object').value;
+                    const soundtrack = document.getElementById('soundtrack').value;
+                    const dream = document.getElementById('aspiration').value;
+                    
+                    // 生成随机中文独白
+                    let chineseText = '';
+                    
+                    // 名字部分
+                    chineseText += getRandomElement(chineseSentenceTemplates.names)
+                        .replace('{nameLocal}', nameLocal)
+                        .replace('{nameForeign}', nameForeign) + '\n\n';
+                    
+                    // 食物部分
+                    chineseText += getRandomElement(chineseSentenceTemplates.food)
+                        .replace('{food}', food) + '\n\n';
+                    
+                    // 添加地点部分（如果有）
+                    if (place) {
+                        chineseText += getRandomElement(chineseSentenceTemplates.place)
+                            .replace('{place}', place) + '\n\n';
+                    }
+                    
+                    // 添加物品部分（如果有）
+                    if (object) {
+                        chineseText += getRandomElement(chineseSentenceTemplates.object)
+                            .replace('{object}', object) + '\n\n';
+                    }
+                    
+                    // 添加音乐部分（如果有）
+                    if (soundtrack) {
+                        chineseText += getRandomElement(chineseSentenceTemplates.soundtrack)
+                            .replace('{soundtrack}', soundtrack) + '\n\n';
+                    }
+                    
+                    // 添加梦想部分（如果有）
+                    if (dream) {
+                        chineseText += getRandomElement(chineseSentenceTemplates.dreams)
+                            .replace('{dream}', dream) + '\n\n';
+                    }
+                    
+                    // 添加身份认同部分
+                    chineseText += getRandomElement(chineseSentenceTemplates.identity) + '\n\n';
+                    chineseText += getRandomElement(chineseSentenceTemplates.language) + '\n\n';
+                    chineseText += getRandomElement(chineseSentenceTemplates.floating) + '\n\n';
+                    chineseText += getRandomElement(chineseSentenceTemplates.ending);
+                    
+                    outputText.innerHTML = chineseText;
+                } else {
+                    // 恢复原文
+                    outputText.innerHTML = currentText;
+                }
+            });
             
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                // 收集基本数据
+                // 收集所有数据
                 const nameLocal = document.getElementById('name-local').value;
                 const nameForeign = document.getElementById('name-foreign').value;
                 const food = document.getElementById('food').value;
+                const place = document.getElementById('home-place').value;
+                const object = document.getElementById('object').value;
+                const soundtrack = document.getElementById('soundtrack').value;
+                const dream = document.getElementById('aspiration').value;
+                const belonging = document.getElementById('belonging').value;
                 
                 // 获取选中的文化背景
                 const culturalBg = Array.from(document.querySelectorAll('input[name="cultural-bg"]:checked'))
@@ -543,6 +855,11 @@
                     nameLocal,
                     nameForeign,
                     food,
+                    place,
+                    object,
+                    soundtrack,
+                    dream,
+                    belonging,
                     culturalBg,
                     languages,
                     feeling,
@@ -551,31 +868,48 @@
                 };
                 
                 // 生成随机独白
-                const nameSentence = getRandomElement(sentenceTemplates.names)
+                let generatedText = '';
+                
+                // 名字部分
+                generatedText += getRandomElement(sentenceTemplates.names)
                     .replace('{nameLocal}', nameLocal)
-                    .replace('{nameForeign}', nameForeign);
+                    .replace('{nameForeign}', nameForeign) + '\n\n';
                 
-                const foodSentence = getRandomElement(sentenceTemplates.food)
-                    .replace('{food}', food);
+                // 食物部分
+                generatedText += getRandomElement(sentenceTemplates.food)
+                    .replace('{food}', food) + '\n\n';
                 
-                const identitySentence = getRandomElement(sentenceTemplates.identity);
-                const languageSentence = getRandomElement(sentenceTemplates.language);
-                const floatingSentence = getRandomElement(sentenceTemplates.floating);
-                const endingSentence = getRandomElement(sentenceTemplates.ending);
+                // 添加地点部分（如果有）
+                if (place) {
+                    generatedText += getRandomElement(sentenceTemplates.place)
+                        .replace('{place}', place) + '\n\n';
+                }
                 
-                // 组合独白
-                currentText = `${nameSentence}
+                // 添加物品部分（如果有）
+                if (object) {
+                    generatedText += getRandomElement(sentenceTemplates.object)
+                        .replace('{object}', object) + '\n\n';
+                }
                 
-${foodSentence}
-
-${identitySentence}
-
-${languageSentence}
-
-${floatingSentence}
-
-${endingSentence}`;
-
+                // 添加音乐部分（如果有）
+                if (soundtrack) {
+                    generatedText += getRandomElement(sentenceTemplates.soundtrack)
+                        .replace('{soundtrack}', soundtrack) + '\n\n';
+                }
+                
+                // 添加梦想部分（如果有）
+                if (dream) {
+                    generatedText += getRandomElement(sentenceTemplates.dreams)
+                        .replace('{dream}', dream) + '\n\n';
+                }
+                
+                // 添加身份认同部分
+                generatedText += getRandomElement(sentenceTemplates.identity) + '\n\n';
+                generatedText += getRandomElement(sentenceTemplates.language) + '\n\n';
+                generatedText += getRandomElement(sentenceTemplates.floating) + '\n\n';
+                generatedText += getRandomElement(sentenceTemplates.ending);
+                
+                currentText = generatedText;
                 currentMonologue.text = currentText;
                 
                 // 显示结果
