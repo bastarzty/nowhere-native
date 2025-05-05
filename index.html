@@ -69,6 +69,7 @@
             text-align: center;
             padding: 2rem 0;
             margin-bottom: 3rem;
+            position: relative;
         }
         
         header h1 {
@@ -84,6 +85,43 @@
             font-size: 1.2rem;
             margin-top: 0.5rem;
             opacity: 0.8;
+        }
+        
+        .memory-box-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: rgba(100, 181, 246, 0.2);
+            color: white;
+            border: 1px solid rgba(100, 181, 246, 0.4);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .memory-box-btn:hover {
+            background-color: rgba(100, 181, 246, 0.4);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            .memory-box-btn {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+            }
         }
         
         .input-form {
@@ -323,6 +361,7 @@
     <div class="stars" id="stars"></div>
     <div class="container">
         <header>
+            <a href="memories.html" class="memory-box-btn" title="View Memory Box">📦</a>
             <h1>Nowhere Native</h1>
             <p class="subtitle">A generative experience for the culturally displaced.</p>
         </header>
