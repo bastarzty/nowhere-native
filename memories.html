@@ -244,6 +244,9 @@
         
         <div class="memory-container" id="memory-container">
             <!-- Memory cards will be dynamically generated here -->
+            <div class="empty-message" style="display: none;">
+                The memory box is still empty. Go create your first cultural identity monologue!
+            </div>
         </div>
         
         <a href="index.html" class="back-link">Return to Creation Page</a>
@@ -251,6 +254,35 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            // Create star background
+            const starsContainer = document.getElementById('stars');
+            const starCount = 200;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                // Random size and position
+                const size = Math.random() * 2 + 1;
+                const left = Math.random() * 100;
+                const top = Math.random() * 100;
+                
+                // Random animation parameters
+                const duration = Math.random() * 5 + 3;
+                const delay = Math.random() * 5;
+                const brightness = Math.random() * 0.7 + 0.3;
+                
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${left}%`;
+                star.style.top = `${top}%`;
+                star.style.setProperty('--duration', `${duration}s`);
+                star.style.setProperty('--delay', `${delay}s`);
+                star.style.setProperty('--brightness', brightness);
+                
+                starsContainer.appendChild(star);
+            }
+            
             // Load memories from localStorage
             const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
             const memoriesContainer = document.getElementById('memory-container');
@@ -263,10 +295,32 @@
                 // Hide empty message and display memories
                 noMemoriesMessage.style.display = 'none';
                 
+                // Get container dimensions
+                const screenWidth = window.innerWidth;
+                const screenHeight = window.innerHeight;
+                
                 // Create elements for each memory
-                memories.forEach(function(memory) {
+                memories.forEach(function(memory, index) {
                     const memoryCard = document.createElement('div');
                     memoryCard.classList.add('memory-card');
+                    
+                    // Calculate random position
+                    const left = Math.random() * (screenWidth - 320) + 20;
+                    const top = Math.random() * (screenHeight - 450) + 120;
+                    
+                    // Set random animation parameters
+                    const rotation = Math.random() * 6 - 3;
+                    const floatDistance = Math.random() * 30 + 10;
+                    const delay = Math.random() * 5;
+                    
+                    memoryCard.style.left = `${left}px`;
+                    memoryCard.style.top = `${top}px`;
+                    memoryCard.style.setProperty('--rotation', rotation);
+                    memoryCard.style.setProperty('--float-distance', floatDistance);
+                    memoryCard.style.setProperty('--delay', delay);
+                    
+                    // Add random z-index
+                    memoryCard.style.zIndex = Math.floor(Math.random() * 5) + 1;
                     
                     const date = new Date(memory.timestamp);
                     const formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
@@ -284,6 +338,59 @@
                     `;
                     
                     memoriesContainer.appendChild(memoryCard);
+                });
+                
+                // Add draggability to cards
+                let activeCard = null;
+                
+                memoriesContainer.addEventListener('mousedown', (e) => {
+                    const card = e.target.closest('.memory-card');
+                    if (card) {
+                        activeCard = card;
+                        activeCard.isBeingDragged = true;
+                        
+                        // Pause animation
+                        activeCard.style.animationPlayState = 'paused';
+                        
+                        const rect = card.getBoundingClientRect();
+                        const offsetX = e.clientX - rect.left;
+                        const offsetY = e.clientY - rect.top;
+                        
+                        activeCard.dataset.offsetX = offsetX;
+                        activeCard.dataset.offsetY = offsetY;
+                        
+                        card.style.zIndex = 100;
+                        
+                        // Add visual effect while dragging
+                        card.style.boxShadow = '0 30px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(100, 181, 246, 0.5)';
+                        card.style.transform = 'scale(1.05) translateZ(50px)';
+                        card.style.opacity = '1';
+                    }
+                });
+                
+                document.addEventListener('mousemove', (e) => {
+                    if (activeCard) {
+                        const offsetX = parseFloat(activeCard.dataset.offsetX);
+                        const offsetY = parseFloat(activeCard.dataset.offsetY);
+                        
+                        const left = e.clientX - offsetX;
+                        const top = e.clientY - offsetY;
+                        
+                        activeCard.style.left = `${left}px`;
+                        activeCard.style.top = `${top}px`;
+                    }
+                });
+                
+                document.addEventListener('mouseup', () => {
+                    if (activeCard) {
+                        // Resume animation
+                        activeCard.style.animationPlayState = 'running';
+                        activeCard.style.boxShadow = '';
+                        activeCard.style.transform = '';
+                        activeCard.style.zIndex = Math.floor(Math.random() * 5) + 1;
+                        activeCard.isBeingDragged = false;
+                        activeCard = null;
+                    }
                 });
             }
         });
