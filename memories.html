@@ -251,19 +251,19 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 从localStorage加载记忆
+            // Load memories from localStorage
             const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
             const memoriesContainer = document.getElementById('memory-container');
             const noMemoriesMessage = document.querySelector('.empty-message');
             
             if (memories.length === 0) {
-                // 显示无记忆的提示
+                // Show empty state message
                 noMemoriesMessage.style.display = 'block';
             } else {
-                // 隐藏无记忆提示并显示记忆
+                // Hide empty message and display memories
                 noMemoriesMessage.style.display = 'none';
                 
-                // 为每个记忆创建元素
+                // Create elements for each memory
                 memories.forEach(function(memory) {
                     const memoryCard = document.createElement('div');
                     memoryCard.classList.add('memory-card');
@@ -277,9 +277,9 @@
                             <span class="memory-feeling ${memory.feeling}">${memory.feeling}</span>
                         </div>
                         <h3 class="memory-title">${memory.nameLocal} / ${memory.nameForeign}</h3>
-                        <p class="memory-detail"><span class="detail-label">食物: </span>${memory.food}</p>
-                        <p class="memory-detail"><span class="detail-label">文化背景: </span>${memory.culturalBg}</p>
-                        <p class="memory-detail"><span class="detail-label">语言: </span>${memory.languages.join(', ')}</p>
+                        <p class="memory-detail"><span class="detail-label">Food: </span>${memory.food}</p>
+                        <p class="memory-detail"><span class="detail-label">Cultural Background: </span>${memory.culturalBg}</p>
+                        <p class="memory-detail"><span class="detail-label">Languages: </span>${memory.languages.join(', ')}</p>
                         <div class="memory-text">${memory.text}</div>
                     `;
                     
