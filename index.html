@@ -572,6 +572,135 @@
             let currentText = '';
             let currentMonologue = {}; // 存储当前独白的数据
             
+            // 英文句子模板
+            const sentenceTemplates = {
+                // 名字相关
+                names: [
+                    "They call me \"{nameForeign}\" at school, but my heart answers to \"{nameLocal}\".",
+                    "My official identity card says \"{nameForeign}\", but my grandmother still calls me \"{nameLocal}\".",
+                    "Some days I introduce myself as \"{nameForeign}\", other days I'm \"{nameLocal}\".",
+                    "I've practiced writing \"{nameForeign}\" so many times I sometimes forget how to write \"{nameLocal}\".",
+                    "I'm \"{nameForeign}\" in their world, and \"{nameLocal}\" in mine."
+                ],
+                
+                // 食物相关
+                food: [
+                    "I've forgotten how to write my name in my mother tongue, but I remember the taste of {food} every weekend.",
+                    "The smell of {food} brings me back to a place I barely remember.",
+                    "I dream about {food} – a taste of home I can't fully describe to my new friends.",
+                    "My mother's {food} recipe will never taste the same when I make it myself.",
+                    "I found myself crying while eating {food} in a foreign restaurant, surprised by my own reaction."
+                ],
+                
+                // 身份感相关
+                identity: [
+                    "I belong to a city that never truly knew me, and to a family that forgot how to explain who I've become.",
+                    "My accent changes depending on who I'm talking to – a chameleon adapting to survive.",
+                    "Home is a concept I've redefined too many times to count.",
+                    "I study my cultural traditions like an anthropologist, trying to understand my own heritage.",
+                    "The more languages I learn, the more versions of myself I discover."
+                ],
+                
+                // 语言相关
+                language: [
+                    "Some nights I dream in English, and cry in my native language.",
+                    "I translate my thoughts before speaking, a secret process nobody sees.",
+                    "There are feelings I can only express in my mother tongue.",
+                    "I still count and pray in my first language, no matter how long I've been away.",
+                    "I speak different languages with different parts of my soul."
+                ],
+                
+                // 漂浮感相关
+                floating: [
+                    "I'm like an island drifting between two worlds.",
+                    "I exist in the spaces between cultures, never fully belonging anywhere.",
+                    "My identity is a constantly shifting mosaic of places I've been.",
+                    "I navigate between worlds like a ghost – present but never completely visible.",
+                    "I've built my home in the hyphen between cultural identities."
+                ],
+                
+                // 结尾问题
+                ending: [
+                    "Who am I?\nYou tell me.",
+                    "Where do I belong?\nPerhaps nowhere and everywhere.",
+                    "What does it mean to have roots?\nI'm still learning.",
+                    "Am I from here or there?\nThe answer changes with the moon.",
+                    "When will I feel at home?\nMaybe when I stop asking this question."
+                ],
+                
+                // 家的地方
+                place: [
+                    "I remember {place} - not as a location, but as a feeling I carry with me.",
+                    "Sometimes I close my eyes and imagine myself back at {place}, where everything made sense.",
+                    "{place} exists now only in my memory, a place I can visit but never stay.",
+                    "The distance between me and {place} grows wider with each passing year.",
+                    "I've recreated little corners of {place} wherever I've lived."
+                ],
+                
+                // 重要物品
+                object: [
+                    "My {object} has traveled with me across borders, a silent witness to my transformation.",
+                    "I keep my {object} close, a tangible reminder of who I used to be.",
+                    "The {object} connects me to a past that sometimes feels like someone else's life.",
+                    "I touch my {object} when I need to remember where I came from.",
+                    "My {object} holds stories I cannot fully translate."
+                ],
+                
+                // 音乐
+                soundtrack: [
+                    "The melody of {soundtrack} follows me like a shadow, connecting fragments of my scattered self.",
+                    "I play {soundtrack} when homesickness becomes unbearable.",
+                    "In the notes of {soundtrack}, I find echoes of a self I left behind.",
+                    "{soundtrack} bridges the gap between my past and present.",
+                    "The rhythm of {soundtrack} beats in sync with a heart caught between worlds."
+                ],
+                
+                // 梦想
+                dreams: [
+                    "My dream to {dream} is rooted in the collision of my divided identities.",
+                    "I wonder if achieving {dream} will finally make me feel whole.",
+                    "The path to {dream} is complicated by the expectations of multiple cultures.",
+                    "My ancestors would not understand my desire to {dream}, and that's both liberating and terrifying.",
+                    "I pursue {dream} as a way to reconcile the different worlds inside me."
+                ],
+                
+                // GPT生成的句子
+                languageDisplacement: [
+                    "I forgot how to write my name in my first language. But I remember how it feels when someone mispronounces it.",
+                    "My accent has a timezone.",
+                    "When I think in Mandarin, I'm loud. In English, I'm careful. In either, I am not quite me.",
+                    "My dreams still speak a language I no longer use when I'm awake.",
+                    "My tongue stutters when switching sides."
+                ],
+                
+                systemicResistance: [
+                    "My identity is in beta. Updated daily. Subject to change.",
+                    "Every form I fill out asks for my legal name. But I never know which one to give.",
+                    "I never chose my English name. It was picked to help me 'blend in'.",
+                    "The visa line taught me which passport matters."
+                ],
+                
+                familialTerms: [
+                    "There's no word in English for what my grandmother called me.",
+                    "I was called Hana at school, but 阿娜 by my auntie. I don't remember which one I cried in.",
+                    "I have three names, and each one belongs to a different version of me.",
+                    "My parents call me one thing, my friends another. I answer to both."
+                ],
+                
+                rootlessness: [
+                    "When I stop translating, I stop existing.",
+                    "Home smelled like garlic and sesame oil. But here, it smells like laundry detergent and cold air.",
+                    "I'm from too many places to belong in just one.",
+                    "I'm homesick for a place I'm not sure existed."
+                ],
+                
+                digitalExistence: [
+                    "My mother tongue corrects itself in red squiggly lines.",
+                    "My name autocorrects into something easier for you.",
+                    "In every database, I am a misspelling."
+                ]
+            };
+            
             // 中文版句子模板
             const chineseSentenceTemplates = {
                 names: [
