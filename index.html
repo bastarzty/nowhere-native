@@ -168,6 +168,20 @@
             background-color: #5095db;
         }
         
+        .secondary-btn {
+            background-color: rgba(100, 181, 246, 0.3);
+            color: white;
+            border: 1px solid rgba(100, 181, 246, 0.5);
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            padding: 0.6rem 1rem;
+            width: auto;
+        }
+        
+        .secondary-btn:hover {
+            background-color: rgba(100, 181, 246, 0.5);
+        }
+        
         form button {
             display: block;
             margin: 2rem auto 0;
@@ -201,47 +215,6 @@
         
         .hidden {
             display: none;
-        }
-        
-        .settings-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .settings-content {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(15px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 2rem;
-            width: 90%;
-            max-width: 500px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
-        }
-        
-        .settings-content h2 {
-            color: var(--accent-color);
-            margin-top: 0;
-            text-align: center;
-        }
-        
-        .settings-form .form-group {
-            margin-bottom: 1.5rem;
-        }
-        
-        .settings-actions {
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            margin-top: 2rem;
         }
         
         footer {
@@ -360,35 +333,12 @@
                 </div>
                 <button id="save-btn">Save as Image</button>
                 <button id="upload-btn">Upload to Collection</button>
-                <button id="submit-github-btn">提交到GitHub</button>
-                <button id="settings-btn">设置</button>
             </div>
         </section>
 
         <footer>
             <p>Nowhere Native - Exploring Identity Displacement</p>
         </footer>
-    </div>
-
-    <!-- 设置模态框 -->
-    <div class="settings-modal" id="settings-modal">
-        <div class="settings-content">
-            <h2>GitHub提交设置</h2>
-            <div class="settings-form">
-                <div class="form-group">
-                    <label for="repo-owner">GitHub用户名</label>
-                    <input type="text" id="repo-owner" placeholder="例如: yourGitHubUsername">
-                </div>
-                <div class="form-group">
-                    <label for="repo-name">仓库名称</label>
-                    <input type="text" id="repo-name" placeholder="例如: nowhere-native">
-                </div>
-                <div class="settings-actions">
-                    <button id="cancel-settings-btn">取消</button>
-                    <button id="save-settings-btn">保存</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -554,46 +504,20 @@
             const selectorContainer = document.getElementById('language-selector-container');
             selectorContainer.appendChild(languageSelector);
             
-            // 添加语言切换功能
-            languageSelector.addEventListener('change', function() {
-                if (currentText && this.value === 'chinese') {
-                    // 获取基本数据生成中文版本
-                    const nameLocal = document.getElementById('name-local').value;
-                    const nameForeign = document.getElementById('name-foreign').value;
-                    const food = document.getElementById('food').value;
-                    
-                    // 生成随机中文独白
-                    const nameSentence = getRandomElement(chineseSentenceTemplates.names)
-                        .replace('{nameLocal}', nameLocal)
-                        .replace('{nameForeign}', nameForeign);
-                    
-                    const foodSentence = getRandomElement(chineseSentenceTemplates.food)
-                        .replace('{food}', food);
-                    
-                    const identitySentence = getRandomElement(chineseSentenceTemplates.identity);
-                    const languageSentence = getRandomElement(chineseSentenceTemplates.language);
-                    const floatingSentence = getRandomElement(chineseSentenceTemplates.floating);
-                    const endingSentence = getRandomElement(chineseSentenceTemplates.ending);
-                    
-                    // 组合中文独白
-                    const chineseText = `${nameSentence}
-                    
-${foodSentence}
-
-${identitySentence}
-
-${languageSentence}
-
-${floatingSentence}
-
-${endingSentence}`;
-                    
-                    outputText.innerHTML = chineseText;
-                } else {
-                    // 恢复原文
-                    outputText.innerHTML = currentText;
-                }
-            });
+            // 获取选中的感受
+            const feeling = document.querySelector('input[name="feeling"]:checked').value;
+            
+            // 保存当前独白数据用于上传
+            currentMonologue = {
+                nameLocal,
+                nameForeign,
+                food,
+                culturalBg,
+                languages,
+                feeling,
+                text: '',
+                timestamp: new Date().toISOString()
+            };
             
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -622,7 +546,6 @@ ${endingSentence}`;
                     culturalBg,
                     languages,
                     feeling,
-                    location: null,
                     text: '',
                     timestamp: new Date().toISOString()
                 };
@@ -671,150 +594,22 @@ ${endingSentence}`;
             
             // 上传到记忆收集器功能
             document.getElementById('upload-btn').addEventListener('click', function() {
-                // 检查是否有独白
+                // 上传当前独白到服务器或本地存储
                 if(!currentMonologue.text) {
                     alert('请先生成一个独白');
                     return;
                 }
                 
-                // 创建唯一ID
-                currentMonologue.id = new Date().getTime() + '-' + Math.random().toString(36).substr(2, 9);
-                
-                // 保存到本地
+                // 暂时使用localStorage存储数据
                 let memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
                 memories.push(currentMonologue);
                 localStorage.setItem('nowhere-native-memories', JSON.stringify(memories));
                 
-                // 提示导出功能
-                const useExport = confirm('您的独白已被保存到本地存储。要与朋友分享，请使用"导出记忆"功能生成文件，然后分享此文件。是否立即导出？');
+                alert('Your monologue has been collected. Check all collected monologues in the "Memory Box".');
                 
-                if (useExport) {
-                    exportMemories();
-                } else {
-                    // 打开记忆盒子
-                    window.open('memories.html', '_blank');
-                }
+                // 打开展示页面
+                window.open('memories.html', '_blank');
             });
-            
-            // GitHub Issues提交功能
-            document.getElementById('submit-github-btn').addEventListener('click', function() {
-                // 检查是否有独白
-                if(!currentMonologue.text) {
-                    alert('请先生成一个独白');
-                    return;
-                }
-                
-                // 从本地存储获取仓库信息
-                const repoOwner = localStorage.getItem('nowhere-native-repo-owner') || '';
-                const repoName = localStorage.getItem('nowhere-native-repo-name') || '';
-                
-                // 如果没有设置仓库信息，打开设置面板
-                if(!repoOwner || !repoName) {
-                    alert('请先在设置中配置GitHub仓库信息');
-                    document.getElementById('settings-modal').style.display = 'flex';
-                    return;
-                }
-                
-                // 准备独白数据
-                const title = `独白: ${currentMonologue.nameLocal} | ${currentMonologue.nameForeign}`;
-                
-                // 创建Issue内容
-                let body = `# 文化身份独白\n\n`;
-                body += `**名字:** ${currentMonologue.nameLocal} | ${currentMonologue.nameForeign}\n\n`;
-                body += `**文化背景:** ${currentMonologue.culturalBg?.join(', ') || 'None'}\n\n`;
-                body += `**语言:** ${currentMonologue.languages?.join(', ') || 'None'}\n\n`;
-                body += `**食物记忆:** ${currentMonologue.food}\n\n`;
-                body += `**感受:** ${currentMonologue.feeling}\n\n`;
-                body += `**独白内容:**\n\n\`\`\`\n${currentMonologue.text}\n\`\`\`\n\n`;
-                body += `---\n*提交于 ${new Date().toLocaleString()}*`;
-                
-                // 编码为URL参数
-                const issueUrl = `https://github.com/${repoOwner}/${repoName}/issues/new?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
-                
-                // 打开新窗口提交Issue
-                window.open(issueUrl, '_blank');
-            });
-            
-            // 设置功能相关
-            const settingsModal = document.getElementById('settings-modal');
-            const settingsBtn = document.getElementById('settings-btn');
-            const cancelSettingsBtn = document.getElementById('cancel-settings-btn');
-            const saveSettingsBtn = document.getElementById('save-settings-btn');
-            
-            // 打开设置模态框
-            settingsBtn.addEventListener('click', function() {
-                // 填充已保存的设置
-                document.getElementById('repo-owner').value = localStorage.getItem('nowhere-native-repo-owner') || '';
-                document.getElementById('repo-name').value = localStorage.getItem('nowhere-native-repo-name') || '';
-                
-                settingsModal.style.display = 'flex';
-            });
-            
-            // 关闭设置模态框
-            cancelSettingsBtn.addEventListener('click', function() {
-                settingsModal.style.display = 'none';
-            });
-            
-            // 保存设置
-            saveSettingsBtn.addEventListener('click', function() {
-                const repoOwner = document.getElementById('repo-owner').value.trim();
-                const repoName = document.getElementById('repo-name').value.trim();
-                
-                if(!repoOwner || !repoName) {
-                    alert('请填写GitHub用户名和仓库名称');
-                    return;
-                }
-                
-                // 保存到本地存储
-                localStorage.setItem('nowhere-native-repo-owner', repoOwner);
-                localStorage.setItem('nowhere-native-repo-name', repoName);
-                
-                // 关闭模态框
-                settingsModal.style.display = 'none';
-                
-                alert('设置已保存');
-            });
-            
-            // 点击模态框背景关闭
-            settingsModal.addEventListener('click', function(e) {
-                if(e.target === settingsModal) {
-                    settingsModal.style.display = 'none';
-                }
-            });
-            
-            // 添加导出功能按钮
-            const actionsContainer = document.querySelector('.actions');
-            const exportBtn = document.createElement('button');
-            exportBtn.textContent = '导出记忆';
-            exportBtn.id = 'export-btn';
-            exportBtn.addEventListener('click', exportMemories);
-            actionsContainer.appendChild(exportBtn);
-            
-            // 导出记忆函数
-            function exportMemories() {
-                // 从本地存储获取所有记忆
-                const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
-                
-                if (memories.length === 0) {
-                    alert('没有可导出的记忆');
-                    return;
-                }
-                
-                // 创建数据URL
-                const dataStr = JSON.stringify(memories);
-                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-                
-                // 创建下载链接
-                const exportLink = document.createElement('a');
-                exportLink.setAttribute('href', dataUri);
-                exportLink.setAttribute('download', 'nowhere-native-memories.json');
-                exportLink.style.display = 'none';
-                
-                // 添加到DOM，触发下载，然后移除
-                document.body.appendChild(exportLink);
-                exportLink.click();
-                document.body.removeChild(exportLink);
-            }
             
             // 重新生成功能
             document.getElementById('regenerate-btn').addEventListener('click', function() {

@@ -210,40 +210,26 @@
             line-height: 1.6;
         }
         
-        .controls {
+        .back-link {
             position: fixed;
             bottom: 20px;
-            left: 0;
-            right: 0;
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            z-index: 10;
-            padding: 10px;
-        }
-        
-        .control-btn {
+            left: 20px;
             background-color: rgba(100, 181, 246, 0.2);
             color: white;
             padding: 12px 24px;
             border-radius: 30px;
-            border: 1px solid rgba(100, 181, 246, 0.3);
-            cursor: pointer;
-            font-size: 0.9rem;
+            text-decoration: none;
+            z-index: 10;
             backdrop-filter: blur(5px);
-            font-family: inherit;
+            border: 1px solid rgba(100, 181, 246, 0.3);
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
         
-        .control-btn:hover {
+        .back-link:hover {
             background-color: rgba(100, 181, 246, 0.4);
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
-        }
-        
-        .back-link {
-            text-decoration: none;
-            color: white;
         }
     </style>
 </head>
@@ -259,328 +245,45 @@
         <div class="memory-container" id="memory-container">
             <!-- Memory cards will be dynamically generated here -->
         </div>
-
-        <div class="controls">
-            <input type="file" id="import-file" accept=".json" style="display:none">
-            <button id="import-btn" class="control-btn">导入记忆</button>
-            <button id="export-btn" class="control-btn">导出记忆</button>
-            <button id="github-btn" class="control-btn">查看GitHub提交</button>
-            <button class="control-btn"><a href="index.html" class="back-link">返回创作页</a></button>
-        </div>
+        
+        <a href="index.html" class="back-link">Return to Creation Page</a>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 创建星星背景
-            const starsContainer = document.getElementById('stars');
-            const starCount = 200;
+            // 从localStorage加载记忆
+            const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
+            const memoriesContainer = document.getElementById('memory-container');
+            const noMemoriesMessage = document.querySelector('.empty-message');
             
-            for (let i = 0; i < starCount; i++) {
-                const star = document.createElement('div');
-                star.className = 'star';
+            if (memories.length === 0) {
+                // 显示无记忆的提示
+                noMemoriesMessage.style.display = 'block';
+            } else {
+                // 隐藏无记忆提示并显示记忆
+                noMemoriesMessage.style.display = 'none';
                 
-                // 随机大小和位置
-                const size = Math.random() * 2 + 1;
-                const left = Math.random() * 100;
-                const top = Math.random() * 100;
-                
-                // 随机动画参数
-                const duration = Math.random() * 5 + 3;
-                const delay = Math.random() * 5;
-                const brightness = Math.random() * 0.7 + 0.3;
-                
-                star.style.width = `${size}px`;
-                star.style.height = `${size}px`;
-                star.style.left = `${left}%`;
-                star.style.top = `${top}%`;
-                star.style.setProperty('--duration', `${duration}s`);
-                star.style.setProperty('--delay', `${delay}s`);
-                star.style.setProperty('--brightness', brightness);
-                
-                starsContainer.appendChild(star);
-            }
-            
-            const container = document.getElementById('memory-container');
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
-            
-            // 从本地获取独白数据
-            loadAllMemories();
-            
-            function loadAllMemories() {
-                // 从本地存储获取记忆
-                const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
-                
-                if (memories.length === 0) {
-                    // 显示空状态
-                    const emptyMessage = document.createElement('div');
-                    emptyMessage.className = 'empty-message';
-                    emptyMessage.textContent = 'The memory box is still empty. Go create your first cultural identity monologue!';
-                    container.appendChild(emptyMessage);
-                } else {
-                    // 显示记忆
-                    displayMemories(memories);
-                }
-            }
-            
-            // 设置导入功能
-            const importBtn = document.getElementById('import-btn');
-            const importFile = document.createElement('input');
-            importFile.type = 'file';
-            importFile.accept = '.json';
-            importFile.style.display = 'none';
-            document.body.appendChild(importFile);
-            
-            importBtn.addEventListener('click', function() {
-                importFile.click();
-            });
-            
-            importFile.addEventListener('change', function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(event) {
-                    try {
-                        // 解析JSON
-                        const importedMemories = JSON.parse(event.target.result);
-                        
-                        if (!Array.isArray(importedMemories)) {
-                            throw new Error('无效的记忆文件格式');
-                        }
-                        
-                        // 获取现有记忆
-                        const existingMemories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
-                        
-                        // 合并记忆（避免重复）
-                        const mergedMemories = mergeMemories(existingMemories, importedMemories);
-                        
-                        // 保存合并后的记忆
-                        localStorage.setItem('nowhere-native-memories', JSON.stringify(mergedMemories));
-                        
-                        // 清除现有卡片
-                        container.innerHTML = '';
-                        
-                        // 重新显示
-                        displayMemories(mergedMemories);
-                        
-                        alert(`成功导入了 ${importedMemories.length} 条记忆`);
-                    } catch (error) {
-                        console.error('导入记忆失败:', error);
-                        alert('导入失败: ' + error.message);
-                    }
+                // 为每个记忆创建元素
+                memories.forEach(function(memory) {
+                    const memoryCard = document.createElement('div');
+                    memoryCard.classList.add('memory-card');
                     
-                    // 重置文件输入
-                    importFile.value = '';
-                };
-                
-                reader.readAsText(file);
-            });
-            
-            // 设置导出功能
-            const exportBtn = document.getElementById('export-btn');
-            exportBtn.addEventListener('click', function() {
-                // 从本地存储获取所有记忆
-                const memories = JSON.parse(localStorage.getItem('nowhere-native-memories') || '[]');
-                
-                if (memories.length === 0) {
-                    alert('没有可导出的记忆');
-                    return;
-                }
-                
-                // 创建数据URL
-                const dataStr = JSON.stringify(memories);
-                const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-                
-                // 创建下载链接
-                const exportLink = document.createElement('a');
-                exportLink.setAttribute('href', dataUri);
-                exportLink.setAttribute('download', 'nowhere-native-memories.json');
-                exportLink.style.display = 'none';
-                
-                // 添加到DOM，触发下载，然后移除
-                document.body.appendChild(exportLink);
-                exportLink.click();
-                document.body.removeChild(exportLink);
-            });
-            
-            // 添加GitHub仓库查看功能
-            const githubBtn = document.getElementById('github-btn');
-            githubBtn.addEventListener('click', function() {
-                // 从本地存储获取仓库信息
-                const repoOwner = localStorage.getItem('nowhere-native-repo-owner') || '';
-                const repoName = localStorage.getItem('nowhere-native-repo-name') || '';
-                
-                // 如果没有设置仓库信息，提示用户
-                if(!repoOwner || !repoName) {
-                    alert('请先在主页设置中配置GitHub仓库信息');
-                    return;
-                }
-                
-                // 打开GitHub Issues页面
-                window.open(`https://github.com/${repoOwner}/${repoName}/issues`, '_blank');
-            });
-            
-            // 合并记忆功能
-            function mergeMemories(existingMemories, importedMemories) {
-                // 使用Map来保证唯一性（基于ID）
-                const uniqueMemories = new Map();
-                
-                // 添加现有记忆
-                existingMemories.forEach(memory => {
-                    if (memory.id) {
-                        uniqueMemories.set(memory.id, memory);
-                    } else {
-                        // 为旧数据生成ID
-                        memory.id = new Date().getTime() + '-' + Math.random().toString(36).substr(2, 9);
-                        uniqueMemories.set(memory.id, memory);
-                    }
-                });
-                
-                // 添加导入的记忆
-                importedMemories.forEach(memory => {
-                    if (memory.id) {
-                        uniqueMemories.set(memory.id, memory);
-                    } else {
-                        // 为导入数据生成ID
-                        memory.id = new Date().getTime() + '-' + Math.random().toString(36).substr(2, 9);
-                        uniqueMemories.set(memory.id, memory);
-                    }
-                });
-                
-                // 转换回数组并按时间排序（最新的在前）
-                return Array.from(uniqueMemories.values())
-                    .sort((a, b) => new Date(b.timestamp || 0) - new Date(a.timestamp || 0));
-            }
-            
-            // 显示记忆
-            function displayMemories(memories) {
-                // 为每个独白创建一个漂浮卡片
-                memories.forEach((memory, index) => {
-                    const card = document.createElement('div');
-                    card.className = 'memory-card';
+                    const date = new Date(memory.timestamp);
+                    const formattedDate = `${date.getFullYear()}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getDate().toString().padStart(2, '0')}`;
                     
-                    // 计算随机位置
-                    const left = Math.random() * (screenWidth - 320) + 20;
-                    const top = Math.random() * (screenHeight - 450) + 120;
-                    
-                    // 设置随机动画参数
-                    const rotation = Math.random() * 6 - 3;
-                    const floatDistance = Math.random() * 30 + 10;
-                    const delay = Math.random() * 5;
-                    
-                    card.style.left = `${left}px`;
-                    card.style.top = `${top}px`;
-                    card.style.setProperty('--rotation', rotation);
-                    card.style.setProperty('--float-distance', floatDistance);
-                    card.style.setProperty('--delay', delay);
-                    
-                    // 添加随机 z-index
-                    card.style.zIndex = Math.floor(Math.random() * 5) + 1;
-                    
-                    // 添加随机透明度变化（星星效果）
-                    const baseOpacity = Math.random() * 0.2 + 0.8;
-                    card.style.opacity = baseOpacity;
-                    
-                    // 填充卡片内容
-                    card.innerHTML = `
-                        <div class="name">${memory.nameLocal || 'Unknown'} | ${memory.nameForeign || 'Unknown'}</div>
-                        <div class="text">${memory.text || 'No content'}</div>
-                        <div class="tags">
-                            ${memory.feeling ? `<span class="tag">${memory.feeling}</span>` : ''}
-                            ${memory.culturalBg && Array.isArray(memory.culturalBg) ? memory.culturalBg.map(bg => `<span class="tag">${bg}</span>`).join('') : ''}
+                    memoryCard.innerHTML = `
+                        <div class="memory-meta">
+                            <span class="memory-date">${formattedDate}</span>
+                            <span class="memory-feeling ${memory.feeling}">${memory.feeling}</span>
                         </div>
-                        <div class="meta">Food memory: ${memory.food || 'None'}</div>
+                        <h3 class="memory-title">${memory.nameLocal} / ${memory.nameForeign}</h3>
+                        <p class="memory-detail"><span class="detail-label">食物: </span>${memory.food}</p>
+                        <p class="memory-detail"><span class="detail-label">文化背景: </span>${memory.culturalBg}</p>
+                        <p class="memory-detail"><span class="detail-label">语言: </span>${memory.languages.join(', ')}</p>
+                        <div class="memory-text">${memory.text}</div>
                     `;
                     
-                    container.appendChild(card);
-                    
-                    // 添加额外的随机移动和轻微闪烁效果
-                    setInterval(() => {
-                        if (!card.isBeingDragged) {
-                            const newLeft = parseFloat(card.style.left) + (Math.random() * 1 - 0.5);
-                            const newOpacity = baseOpacity + (Math.random() * 0.1 - 0.05);
-                            
-                            // 确保卡片保持在可见范围内并调整透明度
-                            if (newLeft > 20 && newLeft < screenWidth - 300) {
-                                card.style.left = `${newLeft}px`;
-                                card.style.opacity = newOpacity;
-                            }
-                        }
-                    }, 3000 + Math.random() * 2000);
-                });
-                
-                // 可拖动功能
-                let activeCard = null;
-
-                container.addEventListener('mousedown', (e) => {
-                    const card = e.target.closest('.memory-card');
-                    if (card) {
-                        activeCard = card;
-                        activeCard.isBeingDragged = true;
-                        
-                        // 暂停动画
-                        activeCard.style.animationPlayState = 'paused';
-                        
-                        const rect = card.getBoundingClientRect();
-                        const offsetX = e.clientX - rect.left;
-                        const offsetY = e.clientY - rect.top;
-                        
-                        activeCard.dataset.offsetX = offsetX;
-                        activeCard.dataset.offsetY = offsetY;
-                        
-                        card.style.zIndex = 100;
-                        
-                        // 添加拖动时的视觉效果
-                        card.style.boxShadow = '0 30px 60px rgba(0, 0, 0, 0.4), 0 0 30px rgba(100, 181, 246, 0.5)';
-                        card.style.transform = 'scale(1.05) translateZ(50px)';
-                        card.style.opacity = '1';
-                    }
-                });
-
-                document.addEventListener('mousemove', (e) => {
-                    if (activeCard) {
-                        const offsetX = parseFloat(activeCard.dataset.offsetX);
-                        const offsetY = parseFloat(activeCard.dataset.offsetY);
-                        
-                        const left = e.clientX - offsetX;
-                        const top = e.clientY - offsetY;
-                        
-                        activeCard.style.left = `${left}px`;
-                        activeCard.style.top = `${top}px`;
-                    }
-                });
-
-                document.addEventListener('mouseup', () => {
-                    if (activeCard) {
-                        // 恢复动画
-                        activeCard.style.animationPlayState = 'running';
-                        activeCard.style.boxShadow = '';
-                        activeCard.style.transform = '';
-                        activeCard.style.zIndex = Math.floor(Math.random() * 5) + 1;
-                        activeCard.isBeingDragged = false;
-                        activeCard = null;
-                    }
-                });
-                
-                // 添加鼠标移动时的视差效果
-                document.addEventListener('mousemove', (e) => {
-                    const mouseX = e.clientX / window.innerWidth;
-                    const mouseY = e.clientY / window.innerHeight;
-                    
-                    const cards = document.querySelectorAll('.memory-card');
-                    cards.forEach(card => {
-                        if (!card.isBeingDragged) {
-                            const depth = parseFloat(card.style.zIndex) || 1;
-                            const moveX = (mouseX - 0.5) * depth * 15;
-                            const moveY = (mouseY - 0.5) * depth * 15;
-                            
-                            card.style.transform = `translateX(${moveX}px) translateY(${moveY}px) rotate(calc(var(--rotation) * 1deg)) translateZ(${depth * 5}px)`;
-                        }
-                    });
-                    
-                    // 星星也随鼠标轻微移动
-                    starsContainer.style.transform = `translateX(${(mouseX - 0.5) * -10}px) translateY(${(mouseY - 0.5) * -10}px)`;
+                    memoriesContainer.appendChild(memoryCard);
                 });
             }
         });
