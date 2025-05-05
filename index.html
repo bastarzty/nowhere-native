@@ -572,99 +572,6 @@
             let currentText = '';
             let currentMonologue = {}; // 存储当前独白的数据
             
-            // 随机独白句子模板
-            const sentenceTemplates = {
-                // 名字相关
-                names: [
-                    "They call me \"{nameForeign}\" at school, but my heart answers to \"{nameLocal}\".",
-                    "My official identity card says \"{nameForeign}\", but my grandmother still calls me \"{nameLocal}\".",
-                    "Some days I introduce myself as \"{nameForeign}\", other days I'm \"{nameLocal}\".",
-                    "I've practiced writing \"{nameForeign}\" so many times I sometimes forget how to write \"{nameLocal}\".",
-                    "I'm \"{nameForeign}\" in their world, and \"{nameLocal}\" in mine."
-                ],
-                
-                // 食物相关
-                food: [
-                    "I've forgotten how to write my name in my mother tongue, but I remember the taste of {food} every weekend.",
-                    "The smell of {food} brings me back to a place I barely remember.",
-                    "I dream about {food} – a taste of home I can't fully describe to my new friends.",
-                    "My mother's {food} recipe will never taste the same when I make it myself.",
-                    "I found myself crying while eating {food} in a foreign restaurant, surprised by my own reaction."
-                ],
-                
-                // 身份感相关
-                identity: [
-                    "I belong to a city that never truly knew me, and to a family that forgot how to explain who I've become.",
-                    "My accent changes depending on who I'm talking to – a chameleon adapting to survive.",
-                    "Home is a concept I've redefined too many times to count.",
-                    "I study my cultural traditions like an anthropologist, trying to understand my own heritage.",
-                    "The more languages I learn, the more versions of myself I discover."
-                ],
-                
-                // 语言相关
-                language: [
-                    "Some nights I dream in English, and cry in my native language.",
-                    "I translate my thoughts before speaking, a secret process nobody sees.",
-                    "There are feelings I can only express in my mother tongue.",
-                    "I still count and pray in my first language, no matter how long I've been away.",
-                    "I speak different languages with different parts of my soul."
-                ],
-                
-                // 漂浮感相关
-                floating: [
-                    "I'm like an island drifting between two worlds.",
-                    "I exist in the spaces between cultures, never fully belonging anywhere.",
-                    "My identity is a constantly shifting mosaic of places I've been.",
-                    "I navigate between worlds like a ghost – present but never completely visible.",
-                    "I've built my home in the hyphen between cultural identities."
-                ],
-                
-                // 结尾问题
-                ending: [
-                    "Who am I?\nYou tell me.",
-                    "Where do I belong?\nPerhaps nowhere and everywhere.",
-                    "What does it mean to have roots?\nI'm still learning.",
-                    "Am I from here or there?\nThe answer changes with the moon.",
-                    "When will I feel at home?\nMaybe when I stop asking this question."
-                ],
-                
-                // 家的地方
-                place: [
-                    "I remember {place} - not as a location, but as a feeling I carry with me.",
-                    "Sometimes I close my eyes and imagine myself back at {place}, where everything made sense.",
-                    "{place} exists now only in my memory, a place I can visit but never stay.",
-                    "The distance between me and {place} grows wider with each passing year.",
-                    "I've recreated little corners of {place} wherever I've lived."
-                ],
-                
-                // 重要物品
-                object: [
-                    "My {object} has traveled with me across borders, a silent witness to my transformation.",
-                    "I keep my {object} close, a tangible reminder of who I used to be.",
-                    "The {object} connects me to a past that sometimes feels like someone else's life.",
-                    "I touch my {object} when I need to remember where I came from.",
-                    "My {object} holds stories I cannot fully translate."
-                ],
-                
-                // 音乐
-                soundtrack: [
-                    "The melody of {soundtrack} follows me like a shadow, connecting fragments of my scattered self.",
-                    "I play {soundtrack} when homesickness becomes unbearable.",
-                    "In the notes of {soundtrack}, I find echoes of a self I left behind.",
-                    "{soundtrack} bridges the gap between my past and present.",
-                    "The rhythm of {soundtrack} beats in sync with a heart caught between worlds."
-                ],
-                
-                // 梦想
-                dreams: [
-                    "My dream to {dream} is rooted in the collision of my divided identities.",
-                    "I wonder if achieving {dream} will finally make me feel whole.",
-                    "The path to {dream} is complicated by the expectations of multiple cultures.",
-                    "My ancestors would not understand my desire to {dream}, and that's both liberating and terrifying.",
-                    "I pursue {dream} as a way to reconcile the different worlds inside me."
-                ]
-            };
-            
             // 中文版句子模板
             const chineseSentenceTemplates = {
                 names: [
@@ -745,6 +652,42 @@
                     "通往{dream}的道路因多种文化的期望而变得复杂。",
                     "我的祖先不会理解我{dream}的愿望，这既解放又可怕。",
                     "我追求{dream}作为调和我内心不同世界的方式。"
+                ],
+                
+                // GPT生成的句子（中文版）
+                languageDisplacement: [
+                    "我忘记了如何用母语写我的名字，但我记得当有人念错我名字时的感受。",
+                    "我的口音有时区。",
+                    "当我用普通话思考时，我很响亮。用英语时，我很谨慎。无论哪种，我都不完全是我自己。",
+                    "我的梦仍说着我清醒时不再使用的语言。",
+                    "我的舌头在转换语言时会结巴。"
+                ],
+                
+                systemicResistance: [
+                    "我的身份处于测试版。每天更新。随时可能改变。",
+                    "每份表格都要求我填写法定姓名。但我从不知道该给哪一个。",
+                    "我没有选择我的英文名。它是为了帮助我'融入'而挑选的。",
+                    "签证队伍教会了我哪本护照更重要。"
+                ],
+                
+                familialTerms: [
+                    "英语中没有与奶奶对我的称呼相对应的词。",
+                    "学校里叫我Hana，但姑姑叫我阿娜。我不记得我用哪个名字哭泣。",
+                    "我有三个名字，每个名字都属于不同版本的我。",
+                    "我父母叫我一个名字，朋友叫我另一个。我对两者都有回应。"
+                ],
+                
+                rootlessness: [
+                    "当我停止翻译，我就停止存在。",
+                    "家的味道是大蒜和芝麻油。但这里，味道是洗衣粉和冷空气。",
+                    "我来自太多地方，无法只属于一处。",
+                    "我思念一个我不确定是否存在过的地方。"
+                ],
+                
+                digitalExistence: [
+                    "我的母语在电脑上被红色波浪线标记为错误。",
+                    "我的名字被自动更正为更容易让你读的版本。",
+                    "在每个数据库里，我的名字都是拼写错误。"
                 ]
             };
             
@@ -780,6 +723,14 @@
                     // 生成随机中文独白
                     let chineseText = '';
                     
+                    // 添加随机的主要身份句子
+                    if (Math.random() < 0.5) {
+                        // 使用新的GPT生成的句子
+                        const categories = ['languageDisplacement', 'systemicResistance', 'familialTerms', 'rootlessness', 'digitalExistence'];
+                        const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                        chineseText += getRandomElement(chineseSentenceTemplates[randomCategory]) + '\n\n';
+                    }
+                    
                     // 名字部分
                     chineseText += getRandomElement(chineseSentenceTemplates.names)
                         .replace('{nameLocal}', nameLocal)
@@ -811,6 +762,13 @@
                     if (dream) {
                         chineseText += getRandomElement(chineseSentenceTemplates.dreams)
                             .replace('{dream}', dream) + '\n\n';
+                    }
+                    
+                    // 添加额外的随机GPT生成的句子
+                    if (Math.random() < 0.7) {
+                        const categories = ['languageDisplacement', 'systemicResistance', 'familialTerms', 'rootlessness', 'digitalExistence'];
+                        const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                        chineseText += getRandomElement(chineseSentenceTemplates[randomCategory]) + '\n\n';
                     }
                     
                     // 添加身份认同部分
@@ -870,6 +828,14 @@
                 // 生成随机独白
                 let generatedText = '';
                 
+                // 添加随机的主要身份句子
+                if (Math.random() < 0.5) {
+                    // 使用新的GPT生成的句子
+                    const categories = ['languageDisplacement', 'systemicResistance', 'familialTerms', 'rootlessness', 'digitalExistence'];
+                    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                    generatedText += getRandomElement(sentenceTemplates[randomCategory]) + '\n\n';
+                }
+                
                 // 名字部分
                 generatedText += getRandomElement(sentenceTemplates.names)
                     .replace('{nameLocal}', nameLocal)
@@ -901,6 +867,13 @@
                 if (dream) {
                     generatedText += getRandomElement(sentenceTemplates.dreams)
                         .replace('{dream}', dream) + '\n\n';
+                }
+                
+                // 添加额外的随机GPT生成的句子
+                if (Math.random() < 0.7) {
+                    const categories = ['languageDisplacement', 'systemicResistance', 'familialTerms', 'rootlessness', 'digitalExistence'];
+                    const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+                    generatedText += getRandomElement(sentenceTemplates[randomCategory]) + '\n\n';
                 }
                 
                 // 添加身份认同部分
